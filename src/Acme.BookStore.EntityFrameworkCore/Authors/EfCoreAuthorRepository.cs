@@ -10,6 +10,10 @@ using Volo.Abp.EntityFrameworkCore;
 
 namespace Acme.BookStore.Authors
 {
+    /// <summary>
+    /// 实现Domain中自定义的储存库
+    /// 从EfCoreRepository继承，因此它继承了标准存储库方法的实现。
+    /// </summary>
     public class EfCoreAuthorRepository
         : EfCoreRepository<BookStoreDbContext, Author, Guid>,
             IAuthorRepository
@@ -31,6 +35,8 @@ namespace Acme.BookStore.Authors
             string sorting,
             string filter = null)
         {
+            //WhereIf是ABP框架的快捷扩展方法。
+            //Where仅在满足第一个条件时才添加条件（仅提供过滤器，它才按名称过滤）
             return await DbSet
                 .WhereIf(
                     !filter.IsNullOrWhiteSpace(),

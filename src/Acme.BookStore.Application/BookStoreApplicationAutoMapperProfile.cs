@@ -6,6 +6,10 @@ namespace Acme.BookStore
 {
     public class BookStoreApplicationAutoMapperProfile : Profile
     {
+
+        /// <summary>
+        /// 配置 Dto 映射   将Dto与实体联系起来
+        /// </summary>
         public BookStoreApplicationAutoMapperProfile()
         {
             CreateMap<Book, BookDto>();

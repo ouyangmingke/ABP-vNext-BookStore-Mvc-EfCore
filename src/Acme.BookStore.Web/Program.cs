@@ -1,6 +1,8 @@
 ﻿using System;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+
 using Serilog;
 using Serilog.Events;
 
@@ -11,6 +13,7 @@ namespace Acme.BookStore.Web
         public static int Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
+                // #if  条件编译  详细信息查看 Attribute项目 https://github.com/ouyangmingke/Attribute
 #if DEBUG
                 .MinimumLevel.Debug()
 #else

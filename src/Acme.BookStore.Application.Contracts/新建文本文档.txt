@@ -1,0 +1,1 @@
+#### Acme.BookStore.Application.Contracts` 包含你的[DTO](https://docs.abp.io/zh-Hans/abp/latest/Data-Transfer-Objects)和[应用服务](https://docs.abp.io/zh-Hans/abp/latest/Application-Services)接口.

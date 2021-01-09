@@ -55,6 +55,10 @@ namespace Acme.BookStore.Web
         )]
     public class BookStoreWebModule : AbpModule
     {
+        /// <summary>
+        /// 预配置
+        /// </summary>
+        /// <param name="context"></param>
         public override void PreConfigureServices(ServiceConfigurationContext context)
         {
             context.Services.PreConfigure<AbpMvcDataAnnotationsLocalizationOptions>(options =>
@@ -70,6 +74,10 @@ namespace Acme.BookStore.Web
             });
         }
 
+        /// <summary>
+        /// 配置服务
+        /// </summary>
+        /// <param name="context"></param>
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             var hostingEnvironment = context.Services.GetHostingEnvironment();
@@ -84,6 +92,7 @@ namespace Acme.BookStore.Web
             ConfigureAutoApiControllers();
             ConfigureSwaggerServices(context.Services);
 
+            // 获取配置并使用  RazorPagesOptions 的可以在预配置中修改
             Configure<RazorPagesOptions>(options =>
             {
                 options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
@@ -92,6 +101,10 @@ namespace Acme.BookStore.Web
             });
         }
 
+        /// <summary>
+        /// 配置Url
+        /// </summary>
+        /// <param name="configuration"></param>
         private void ConfigureUrls(IConfiguration configuration)
         {
             Configure<AppUrlOptions>(options =>
@@ -100,6 +113,11 @@ namespace Acme.BookStore.Web
             });
         }
 
+        /// <summary>
+        /// 配置身份验证
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="configuration"></param>
         private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
         {
             context.Services.AddAuthentication()
@@ -111,6 +129,9 @@ namespace Acme.BookStore.Web
                 });
         }
 
+        /// <summary>
+        /// 配置数据映射
+        /// </summary>
         private void ConfigureAutoMapper()
         {
             Configure<AbpAutoMapperOptions>(options =>

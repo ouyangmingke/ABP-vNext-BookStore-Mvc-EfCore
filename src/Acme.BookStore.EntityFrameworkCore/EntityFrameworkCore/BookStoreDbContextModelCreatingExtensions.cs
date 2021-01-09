@@ -1,6 +1,8 @@
 ﻿using Acme.BookStore.Authors;
 using Acme.BookStore.Books;
+
 using Microsoft.EntityFrameworkCore;
+
 using Volo.Abp;
 using Volo.Abp.EntityFrameworkCore.Modeling;
 
@@ -19,7 +21,7 @@ namespace Acme.BookStore.EntityFrameworkCore
                 b.ToTable(BookStoreConsts.DbTablePrefix + "Books", BookStoreConsts.DbSchema);
                 b.ConfigureByConvention(); //auto configure for the base class props
                 b.Property(x => x.Name).IsRequired().HasMaxLength(128);
-                
+
                 b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
             });
 
@@ -28,7 +30,7 @@ namespace Acme.BookStore.EntityFrameworkCore
                 b.ToTable(BookStoreConsts.DbTablePrefix + "Authors",
                     BookStoreConsts.DbSchema);
 
-                b.ConfigureByConvention();
+                b.ConfigureByConvention();//配置/映射继承的属性,应始终对你所有的实体使用它.
 
                 b.Property(x => x.Name)
                     .IsRequired()

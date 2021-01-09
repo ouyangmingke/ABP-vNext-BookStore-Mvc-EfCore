@@ -24,6 +24,9 @@ namespace Acme.BookStore.EntityFrameworkCore
     {
         public DbSet<Author> Authors { get; set; }
 
+        /// <summary>
+        /// EF Core将实体和 DbContext 建立关联
+        /// </summary>
         public DbSet<Book> Books { get; set; }
 
         public DbSet<AppUser> Users { get; set; }
@@ -38,6 +41,9 @@ namespace Acme.BookStore.EntityFrameworkCore
 
         }
 
+        /// <summary>
+        /// 运行的时候使用
+        /// </summary>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

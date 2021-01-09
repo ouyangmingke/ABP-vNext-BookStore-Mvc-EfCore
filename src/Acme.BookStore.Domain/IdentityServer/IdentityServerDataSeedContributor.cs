@@ -20,6 +20,9 @@ using Client = Volo.Abp.IdentityServer.Clients.Client;
 
 namespace Acme.BookStore.IdentityServer
 {
+    /// <summary>
+    /// 添加种子数据
+    /// </summary>
     public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransientDependency
     {
         private readonly IApiResourceRepository _apiResourceRepository;

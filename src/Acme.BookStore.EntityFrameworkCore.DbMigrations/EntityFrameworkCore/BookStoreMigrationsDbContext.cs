@@ -25,6 +25,10 @@ namespace Acme.BookStore.EntityFrameworkCore
 
         }
 
+        /// <summary>
+        /// 数据库迁移的时候使用
+        /// </summary>
+        /// <param name="builder"></param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
