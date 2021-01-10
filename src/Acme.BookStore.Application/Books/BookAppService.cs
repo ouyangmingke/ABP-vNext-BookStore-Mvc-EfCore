@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Acme.BookStore.Authors;
 using Acme.BookStore.Permissions;
+
 using Microsoft.AspNetCore.Authorization;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
@@ -12,16 +15,22 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Books
 {
+    /// <summary>
+    /// 注入图书实体的默认仓库
+    /// </summary>
     [Authorize(BookStorePermissions.Books.Default)]
     public class BookAppService :
-        CrudAppService<
-            Book, //The Book entity
-            BookDto, //Used to show books
-            Guid, //Primary key of the book entity
-            PagedAndSortedResultRequestDto, //Used for paging/sorting
-            CreateUpdateBookDto>, //Used to create/update a book
-        IBookAppService //implement the IBookAppService
+        CrudAppService<// CURD基类
+            Book, //The Book entity  实体
+            BookDto, //Used to show books 服务层使用Dto
+            Guid, //Primary key of the book entity 主键
+            PagedAndSortedResultRequestDto, //Used for paging/sorting 分页排序
+            CreateUpdateBookDto>, //Used to create/update a book 创建更新Dto
+        IBookAppService //implement the IBookAppService 实现接口
     {
+        /// <summary>
+        /// 扩展后的标准存储库
+        /// </summary>
         private readonly IAuthorRepository _authorRepository;
 
         public BookAppService(
@@ -41,9 +50,9 @@ namespace Acme.BookStore.Books
         {
             //Prepare a query to join books and authors
             var query = from book in Repository
-                join author in _authorRepository on book.AuthorId equals author.Id
-                where book.Id == id
-                select new { book, author };
+                        join author in _authorRepository on book.AuthorId equals author.Id
+                        where book.Id == id
+                        select new { book, author };
 
             //Execute the query and get the book with author
             var queryResult = await AsyncExecuter.FirstOrDefaultAsync(query);
@@ -61,9 +70,9 @@ namespace Acme.BookStore.Books
         {
             //Prepare a query to join books and authors
             var query = from book in Repository
-                join author in _authorRepository on book.AuthorId equals author.Id
-                orderby input.Sorting //TODO: Can not sort like that!
-                select new {book, author};
+                        join author in _authorRepository on book.AuthorId equals author.Id
+                        orderby input.Sorting //TODO: Can not sort like that!
+                        select new { book, author };
 
             query = query
                 .Skip(input.SkipCount)

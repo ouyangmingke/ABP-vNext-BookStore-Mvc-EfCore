@@ -15,11 +15,15 @@ namespace Acme.BookStore.EntityFrameworkCore
             Check.NotNull(builder, nameof(builder));
 
             /* Configure your own tables/entities inside here */
+            /* 配置表和实体*/
 
             builder.Entity<Book>(b =>
             {
+                // 配置表名 公用值 应使用常量
                 b.ToTable(BookStoreConsts.DbTablePrefix + "Books", BookStoreConsts.DbSchema);
                 b.ConfigureByConvention(); //auto configure for the base class props
+
+                // 配置属性
                 b.Property(x => x.Name).IsRequired().HasMaxLength(128);
 
                 b.HasOne<Author>().WithMany().HasForeignKey(x => x.AuthorId).IsRequired();
@@ -30,7 +34,7 @@ namespace Acme.BookStore.EntityFrameworkCore
                 b.ToTable(BookStoreConsts.DbTablePrefix + "Authors",
                     BookStoreConsts.DbSchema);
 
-                b.ConfigureByConvention();//配置/映射继承的属性,应始终对你所有的实体使用它.
+                b.ConfigureByConvention();//配置/映射继承的属性,应始终对你的所有的实体使用它.
 
                 b.Property(x => x.Name)
                     .IsRequired()

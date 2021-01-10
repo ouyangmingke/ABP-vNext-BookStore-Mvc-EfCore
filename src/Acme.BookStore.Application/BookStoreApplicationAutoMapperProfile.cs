@@ -9,10 +9,12 @@ namespace Acme.BookStore
 
         /// <summary>
         /// 配置 Dto 映射   将Dto与实体联系起来
+        /// 定义正确的映射，AutoMapper库可以自动执行此转换
         /// </summary>
         public BookStoreApplicationAutoMapperProfile()
         {
             CreateMap<Book, BookDto>();
+
             CreateMap<CreateUpdateBookDto, Book>();
 
             CreateMap<Author, AuthorDto>();
