@@ -34,7 +34,7 @@ namespace Acme.BookStore.EntityFrameworkCore
             base.OnModelCreating(builder);
 
             /* Include modules to your migration db context */
-
+            // 迁移ABP 模块需要的表
             builder.ConfigurePermissionManagement();
             builder.ConfigureSettingManagement();
             builder.ConfigureBackgroundJobs();
@@ -45,7 +45,7 @@ namespace Acme.BookStore.EntityFrameworkCore
             builder.ConfigureTenantManagement();
 
             /* Configure your own tables/entities inside the ConfigureBookStore method */
-
+            // 迁移自己的表
             builder.ConfigureBookStore();
         }
     }

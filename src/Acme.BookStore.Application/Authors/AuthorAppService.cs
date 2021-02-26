@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Acme.BookStore.Permissions;
 using Microsoft.AspNetCore.Authorization;
 using Volo.Abp.Application.Dtos;
+using Volo.Abp.Settings;
 
 namespace Acme.BookStore.Authors
 {
@@ -13,6 +14,7 @@ namespace Acme.BookStore.Authors
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly AuthorManager _authorManager;
+        public ISettingProvider _settingProvider { get; set; }
 
         public AuthorAppService(
             IAuthorRepository authorRepository,
@@ -24,6 +26,7 @@ namespace Acme.BookStore.Authors
 
         public async Task<AuthorDto> GetAsync(Guid id)
         {
+            var aa = await _settingProvider.GetOrNullAsync("BookStore.MySetting1");
             var author = await _authorRepository.GetAsync(id);
             return ObjectMapper.Map<Author, AuthorDto>(author);
         }
