@@ -1,7 +1,13 @@
-﻿using Acme.BookStore.MultiTenancy;
+﻿using Acme.BookStore.BackgroundWorker;
+using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.ObjectExtending;
+
+using Microsoft.Extensions.DependencyInjection;
+
+using Volo.Abp;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
+using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.IdentityServer;
@@ -39,6 +45,19 @@ namespace Acme.BookStore
             {
                 options.IsEnabled = MultiTenancyConsts.IsEnabled;
             });
+
+            // 注册一个singleton实例
+            // IWorker 已经通道继承 ISingletonDependency 实现依赖注入
+            // context.Services.AddSingleton<IWorker,Worker>();
+
+        }
+
+        public override void OnApplicationInitialization(ApplicationInitializationContext context)
+        {
+            // 程序初始化时找到 IWorker 服务 使用 Start方法
+            context.ServiceProvider.GetService<IWorker>().Start();
+
+           
         }
     }
 }
