@@ -8,6 +8,9 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore
 {
+    /// <summary>
+    /// 添加种子数据
+    /// </summary>
     public class BookStoreDataSeederContributor
         : IDataSeedContributor, ITransientDependency
     {

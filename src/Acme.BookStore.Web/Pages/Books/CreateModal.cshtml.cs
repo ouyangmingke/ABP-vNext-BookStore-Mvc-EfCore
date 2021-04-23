@@ -13,6 +13,9 @@ namespace Acme.BookStore.Web.Pages.Books
 {
     public class CreateModalModel : BookStorePageModel
     {
+        /// <summary>
+        /// [BindProperty]将post请求提交上来的数据绑定到该属性
+        /// </summary>
         [BindProperty]
         public CreateBookViewModel Book { get; set; }
 

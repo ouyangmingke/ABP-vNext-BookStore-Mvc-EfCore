@@ -9,6 +9,9 @@ namespace Acme.BookStore.Web.Pages.Authors
 {
     public class CreateModalModel : BookStorePageModel
     {
+        /// <summary>
+        /// 将Post请求提交的数据绑定到该属性
+        /// </summary>
         [BindProperty]
         public CreateAuthorViewModel Author { get; set; }
 

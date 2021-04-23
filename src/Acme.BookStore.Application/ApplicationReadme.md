@@ -1,18 +1,73 @@
+#  应用服务  [ABP应用层 - 应用服务 书栈网](https://www.bookstack.cn/read/abp/Markdown-Abp-4.1ABP%E5%BA%94%E7%94%A8%E5%B1%82-%E5%BA%94%E7%94%A8%E6%9C%8D%E5%8A%A1.md)
+
+应用程序服务用于实现应用程序的**用例**。它们用于**将域逻辑公开给表示层**。
+
+使用**DTO（[数据传输对象](https://docs.abp.io/en/abp/latest/Data-Transfer-Objects)）**作为参数从表示层（可选）调用应用程序服务。它使用域对象**执行某些特定的业务逻辑，**并（可选）将DTO返回到表示层。因此，表示层与域层完全**隔离**。
+
+### [AbstractKeyCrudAppService](https://docs.abp.io/en/abp/latest/Application-Services#abstractkeycrudappservice)
+
+`CrudAppService`要求拥有一个Id属性作为您实体的主键。如果您使用的是复合键，那么您将无法使用它。
+
+`AbstractKeyCrudAppService`实现相同的`ICrudAppService`接口，但是这次无需假设您的主键。
+
+### IBookAppService接口  ApplicationService实现
+
+在ABP中，应用程序服务应实现该`IApplicationService`接口。
+
+
+
+## 数据传输对象
+
+应用程序服务获取并返回DTO，而不是实体。ABP并不强制执行此规则。但是，将实体暴露于表示层（或远程客户端）存在重大问题，因此不建议这样做。
+
+有关更多信息，请参见[DTO文档](https://docs.abp.io/en/abp/latest/Data-Transfer-Objects)。
+
 ### 应用程序层
 
-- 包含您的应用程序服务的实现。
-- 实现   **Application.Contracts**  编写 Crud 的位置
+- 包含您的**应用程序服务**的实现。
+- 实现   **Application.Contracts**  编写 Crud接口 的位置
 
 - 注意   **ApplicationAutoMapperProfile**  这个类  
 
 
 这里进行配置Dto转换
 
-#### 使用方法
+## 对象到对象的映射使用方法
 
 > 通过依赖注入 注入  **IObjectMapper**  然后使用 **Map<>()**  
 >
-> 注意 这里转换的类型 需要在   **Profile**  中配置
+> AutoMapper需要创建一个映射[配置文件类](https://docs.automapper.org/en/stable/Configuration.html#profile-instances)。
+>
+> ```c#
+> public class MyProfile : Profile
+> {
+>     public MyProfile()
+>     {
+>         CreateMap<Book, BookDto>();
+>     }
+> }
+> ```
+>
+> 注册配置文件`AbpAutoMapperOptions`
+>
+> ```c#
+> [DependsOn(typeof(AbpAutoMapperModule))]
+> public class MyModule : AbpModule
+> {
+>     public override void ConfigureServices(ServiceConfigurationContext context)
+>     {
+>         Configure<AbpAutoMapperOptions>(options =>
+>         {
+>             //Add all mappings defined in the assembly of the MyModule class
+>             options.AddMaps<MyModule>();
+>             //AddMaps注册在给定类的程序集中定义的所有概要文件类，通常是您的模块类。它还注册属性映射。
+>         });
+>     }
+> }
+> 
+> ```
+>
+> 
 
 ```c#
     public class Temp
@@ -54,4 +109,3 @@
    >
    > 部分属性无法映射     **需要自定义映射关系**
 
-### 
