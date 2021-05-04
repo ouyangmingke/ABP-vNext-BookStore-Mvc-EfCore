@@ -12,24 +12,17 @@ using Volo.Abp.Threading;
 
 namespace Acme.BookStore.BackgroundWorker
 {
-    public class MyPeriodicBackgroundTwo : AsyncPeriodicBackgroundWorkerBase
+    /// <summary>
+    /// 异步后台工作者
+    /// </summary>
+    public class MyAsyncPeriodicBackgroundWorker : AsyncPeriodicBackgroundWorkerBase
     {
-        public MyPeriodicBackgroundTwo(AbpTimer timer, IServiceScopeFactory serviceScopeFactory) : base(timer, serviceScopeFactory)
+        public MyAsyncPeriodicBackgroundWorker(AbpTimer timer, IServiceScopeFactory serviceScopeFactory) : base(timer, serviceScopeFactory)
         {
             timer.Period = 1000;
         }
 
-        public override Task StartAsync(CancellationToken cancellationToken = default)
-        {
-            return base.StartAsync(cancellationToken);
-        }
-
-        public override Task StopAsync(CancellationToken cancellationToken = default)
-        {
-            return base.StopAsync(cancellationToken);
-        }
         private int _Count = 0;
-
         protected override Task DoWorkAsync(PeriodicBackgroundWorkerContext workerContext)
         {
             _Count++;

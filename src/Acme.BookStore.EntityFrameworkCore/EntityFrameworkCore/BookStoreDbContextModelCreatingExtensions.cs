@@ -10,6 +10,10 @@ namespace Acme.BookStore.EntityFrameworkCore
 {
     public static class BookStoreDbContextModelCreatingExtensions
     {
+
+        /// <summary>
+        /// 这里使用的是C#的扩展方法
+        /// </summary>
         public static void ConfigureBookStore(this ModelBuilder builder)
         {
             Check.NotNull(builder, nameof(builder));

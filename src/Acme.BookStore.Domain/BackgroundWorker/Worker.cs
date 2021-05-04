@@ -14,15 +14,15 @@ namespace Acme.BookStore.BackgroundWorker
     public class Worker : IWorker
     {
 
-        public IBackgroundWorkerManager MyProperty { get; set; }
+        public IBackgroundWorkerManager MyBackgroundWorkerManager { get; set; }
 
-        public IServiceProvider serviceProvider { get; set; }
-        public IServiceScopeFactory serviceScopeFactory { get; set; }
+        public IServiceProvider ServiceProvider { get; set; }
+        public IServiceScopeFactory ServiceScopeFactory { get; set; }
         public void Start()
         {
-            MyProperty.Add(serviceProvider.GetRequiredService<MyPeriodicBackground>());
-            MyProperty.Add(serviceProvider.GetRequiredService<MyPeriodicBackgroundTwo>());
-            //throw new NotImplementedException();
+            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyBackgroundWorkerBase>());
+            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyPeriodicBackgroundWorker>());
+            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyAsyncPeriodicBackgroundWorker>());
         }
     }
 }
