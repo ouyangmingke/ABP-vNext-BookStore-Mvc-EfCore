@@ -9,6 +9,7 @@ namespace Acme.BookStore.UseCache
     [Serializable]
     public class CacheData
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

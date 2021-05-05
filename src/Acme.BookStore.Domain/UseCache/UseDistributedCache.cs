@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -75,8 +77,22 @@ namespace Acme.BookStore.UseCache
 
         public void UseDistributedCache3()
         {
-            Cache.Set(1, new CacheData { Name = "A" });
+            List<CacheData> dataSource = new List<CacheData>();
+            for (var i = 0; i < 10; i++)
+            {
+                dataSource.Add(new CacheData
+                {
+                    Id = i,
+                    Name = "A"+i
+                });
+            }
 
+            var keys = dataSource.Select(t => t.Id).ToList();
+            var values = dataSource.Select(t => t.Name).ToList();
+            var dic = dataSource.ToDictionary(x => x.Id, x => x.Name);
+            
+
+            Cache.Set(1, new CacheData { Name = "A" });
             var value1 = Cache.Get(1);
 
             Cache.Set(1, new CacheData { Name = "B" });
