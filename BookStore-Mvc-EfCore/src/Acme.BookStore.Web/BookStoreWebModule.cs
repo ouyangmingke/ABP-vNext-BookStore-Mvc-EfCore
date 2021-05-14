@@ -93,12 +93,13 @@ namespace Acme.BookStore.Web
             ConfigureSwaggerServices(context.Services);
 
             // 获取配置并使用  RazorPagesOptions 的可以在预配置中修改
-            Configure<RazorPagesOptions>(options =>
-            {
-                options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
-                options.Conventions.AuthorizePage("/Books/CreateModal", BookStorePermissions.Books.Create);
-                options.Conventions.AuthorizePage("/Books/EditModal", BookStorePermissions.Books.Edit);
-            });
+            // 没有权限的用户将被重定向到登录页面
+            //Configure<RazorPagesOptions>(options =>
+            //{
+            //    options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
+            //    options.Conventions.AuthorizePage("/Books/CreateModal", BookStorePermissions.Books.Create);
+            //    options.Conventions.AuthorizePage("/Books/EditModal", BookStorePermissions.Books.Edit);
+            //});
         }
 
         /// <summary>

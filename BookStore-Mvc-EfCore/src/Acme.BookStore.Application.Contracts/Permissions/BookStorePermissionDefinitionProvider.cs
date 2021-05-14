@@ -4,13 +4,23 @@ using Volo.Abp.Localization;
 
 namespace Acme.BookStore.Permissions
 {
+
+    /// <summary>
+    /// 权限定义
+    /// </summary>
     public class BookStorePermissionDefinitionProvider : PermissionDefinitionProvider
     {
         public override void Define(IPermissionDefinitionContext context)
         {
+
+            //L 本地化资源  XXX.Domain.Shared => Localization/BookStore
+
+            // 添加一个权限组
             var bookStoreGroup = context.AddGroup(BookStorePermissions.GroupName, L("Permission:BookStore"));
 
+            // 添加权限
             var booksPermission = bookStoreGroup.AddPermission(BookStorePermissions.Books.Default, L("Permission:Books"));
+            // 添加权限下的子权限
             booksPermission.AddChild(BookStorePermissions.Books.Create, L("Permission:Books.Create"));
             booksPermission.AddChild(BookStorePermissions.Books.Edit, L("Permission:Books.Edit"));
             booksPermission.AddChild(BookStorePermissions.Books.Delete, L("Permission:Books.Delete"));

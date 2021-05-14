@@ -16,6 +16,14 @@
 
 
 
+### 自动生成API Controllers
+
+你通常创建**Controller**以将应用程序服务公开为**HTTP API**端点. 因此允许浏览器或第三方客户端通过AJAX调用它们.
+
+ABP可以[**自动**](https://docs.abp.io/zh-Hans/abp/latest/API/Auto-API-Controllers)按照惯例将你的应用程序服务配置为MVC API控制器.
+
+
+
 ## 数据传输对象
 
 应用程序服务获取并返回DTO，而不是实体。ABP并不强制执行此规则。但是，将实体暴露于表示层（或远程客户端）存在重大问题，因此不建议这样做。

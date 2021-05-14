@@ -10,7 +10,7 @@ using Volo.Abp.Settings;
 namespace Acme.BookStore.Authors
 {
     [Authorize(BookStorePermissions.Authors.Default)]
-    public class AuthorAppService : BookStoreAppService
+    public class AuthorAppService : BookStoreAppService, IAuthorAppService
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly AuthorManager _authorManager;

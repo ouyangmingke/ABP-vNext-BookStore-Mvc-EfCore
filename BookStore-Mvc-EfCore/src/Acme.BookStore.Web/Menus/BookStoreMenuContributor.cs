@@ -39,7 +39,7 @@ namespace Acme.BookStore.Web.Menus
 
             context.Menu.AddItem(bookStoreMenu);
 
-            //CHECK the PERMISSION
+            //CHECK the PERMISSION 检查权限 有权限则添加 菜单项
             if (await context.IsGrantedAsync(BookStorePermissions.Books.Default))
             {
                 bookStoreMenu.AddItem(new ApplicationMenuItem(

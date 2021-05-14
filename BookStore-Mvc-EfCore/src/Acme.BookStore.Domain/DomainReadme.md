@@ -12,6 +12,35 @@
 
 
 
+###  [种子数据](https://docs.abp.io/zh-Hans/abp/latest/Data-Seeding)
+
+**介绍**
+
+> 使用数据库的某些应用程序(或模块),可能需要有一些**初始数据**才能够正常启动和运行. 例如**管理员用户**和角色必须在一开始就可用. 否则你就无法**登录**到应用程序创建新用户和角色.
+>
+> 数据种子也可用于[测试](https://docs.abp.io/zh-Hans/abp/latest/Testing)的目的,你的自动测试可以假定数据库中有一些可用的初始数据.
+
+**ABP框架种子数据系统:**
+
+> - **模块化**: 任何[模块](https://docs.abp.io/zh-Hans/abp/latest/Module-Development-Basics)都可以无声地参与数据播种过程,而不相互了解和影响. 通过这种方式模块将种子化自己的初始数据.
+> - **数据库独立**: 它不仅适用于 EF Core, 也使用其他数据库提供程序(如 [MongoDB](https://docs.abp.io/zh-Hans/abp/latest/MongoDB)).
+> - **生产准备**: 它解决了生产环境中的问题. 参见下面的*On Production*部分.
+> - **依赖注入**: 它充分利用了依赖项注入,你可以在播种初始数据时使用任何内部或外部服务. 实际上你可以做的不仅仅是数据播种.
+
+**使用方法**
+
+> **Acme.BookStore.Domain => DataSeeding.cs**
+
+> - `IDataSeedContributor` 定义了 `SeedAsync` 方法用于执行 **数据种子逻辑**.
+> - 通常**检查数据库**是否已经存在种子数据.
+> - 你可以**注入**服务,检查数据播种所需的任何逻辑.
+
+> 数据种子贡献者由ABP框架自动发现，并作为数据种子过程的一部分执行。
+
+
+
+
+
 #### [基类和接口的审计属性](https://docs.abp.io/zh-Hans/abp/latest/Entities#%E5%9F%BA%E7%B1%BB%E5%92%8C%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%AE%A1%E8%AE%A1%E5%B1%9E%E6%80%A7)
 
 > ABP框架提供了一些接口和基类来**标准化**这些属性,并**自动设置它们的值**.

@@ -16,7 +16,8 @@ using Volo.Abp.Domain.Repositories;
 namespace Acme.BookStore.Books
 {
     /// <summary>
-    /// 注入图书实体的默认仓库
+    /// 注入图书实体应用服务
+    /// 该服务使用了 BookStore.Books 权限分组
     /// </summary>
     [Authorize(BookStorePermissions.Books.Default)]
     public class BookAppService :
@@ -29,7 +30,7 @@ namespace Acme.BookStore.Books
         IBookAppService //implement the IBookAppService 实现接口
     {
         /// <summary>
-        /// 扩展后的标准存储库
+        /// Author存储库
         /// </summary>
         private readonly IAuthorRepository _authorRepository;
 
@@ -38,7 +39,11 @@ namespace Acme.BookStore.Books
             IAuthorRepository authorRepository)
             : base(repository)
         {
+
             _authorRepository = authorRepository;
+
+            // 配置权限 CrudAppService 的基类 AbstractKeyReadOnlyAppService 会自动对CRUD操作使用这些权限
+
             GetPolicyName = BookStorePermissions.Books.Default;
             GetListPolicyName = BookStorePermissions.Books.Default;
             CreatePolicyName = BookStorePermissions.Books.Create;

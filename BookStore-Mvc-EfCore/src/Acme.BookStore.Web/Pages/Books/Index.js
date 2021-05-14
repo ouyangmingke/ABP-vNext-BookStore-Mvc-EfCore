@@ -1,5 +1,7 @@
 ﻿$(function () {
+    // 获取 localization 资源文件
     var l = abp.localization.getResource('BookStore');
+    //var q = abp.auth.isGranted('BookStore.Books.Edit'); 用于检查之前定义的权限
     var createModal = new abp.ModalManager(abp.appPath + 'Books/CreateModal');
     var editModal = new abp.ModalManager(abp.appPath + 'Books/EditModal');
 
@@ -19,14 +21,14 @@
                             [
                                 {
                                     text: l('Edit'),
-                                    visible: abp.auth.isGranted('BookStore.Books.Edit'),
+                                    visible: abp.auth.isGranted('BookStore.Books.Edit'),// 检查权限
                                     action: function (data) {
                                         editModal.open({ id: data.record.id });
                                     }
                                 },
                                 {
                                     text: l('Delete'),
-                                    visible: abp.auth.isGranted('BookStore.Books.Delete'),
+                                    visible: abp.auth.isGranted('BookStore.Books.Delete'),// 检查权限
                                     confirmMessage: function (data) {
                                         return l(
                                             'BookDeletionConfirmationMessage',
