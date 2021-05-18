@@ -1,6 +1,8 @@
 ﻿using System;
 
 using Acme.BookStore.BackgroundWorker;
+using Acme.BookStore.Books;
+using Acme.BookStore.LifeCycle;
 using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.ObjectExtending;
 using Acme.BookStore.UseCache;
@@ -13,6 +15,7 @@ using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Caching;
+using Volo.Abp.Domain.Repositories;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.IdentityServer;
@@ -67,7 +70,7 @@ namespace Acme.BookStore
                     // 到达固定时间后删除
                     // AbsoluteExpiration = new DateTimeOffset(b),
                     // 创建后到达固定时间删除
-                      AbsoluteExpirationRelativeToNow = new TimeSpan(0, 0, 0, 5)
+                    AbsoluteExpirationRelativeToNow = new TimeSpan(0, 0, 0, 5)
                 };
             });
 
@@ -77,11 +80,46 @@ namespace Acme.BookStore
 
         }
 
+
+        /// <summary>
+        /// 应用初始化之前
+        /// </summary>
+        /// <param name="context"></param>
+        public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
+        {
+            Console.WriteLine("应用初始化之前");
+            context.ServiceProvider.GetService<Singleton>().StartAsync();
+            var scoped = context.ServiceProvider.GetService<Scoped>();
+            scoped.StartAsync();
+            context.ServiceProvider.GetService<Transient>().StartAsync();
+        }
+
+        /// <summary>
+        /// 程序初始化
+        /// </summary>
+        /// <param name="context"></param>
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
+            Console.WriteLine("程序初始化");
+            context.ServiceProvider.GetService<Singleton>().StartAsync();
+            context.ServiceProvider.GetService<Scoped>().StartAsync();
+            context.ServiceProvider.GetService<Transient>().StartAsync();
+
             // 程序初始化时找到 IWorker 服务 使用 Start方法
             context.ServiceProvider.GetService<IWorker>().Start();
             context.ServiceProvider.GetService<UseDistributedCache>().Start();
+        }
+
+        /// <summary>
+        /// 程序初始化之后
+        /// </summary>
+        /// <param name="context"></param>
+        public override void OnPostApplicationInitialization(ApplicationInitializationContext context)
+        {
+            Console.WriteLine("程序初始化之后");
+            context.ServiceProvider.GetService<Singleton>().StartAsync();
+            context.ServiceProvider.GetService<Scoped>().StartAsync();
+            context.ServiceProvider.GetService<Transient>().StartAsync();
 
         }
     }
