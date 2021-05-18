@@ -41,6 +41,13 @@ namespace Acme.BookStore.EntityFrameworkCore
                 options.AddDefaultRepositories(includeAllEntities: true);
             });
 
+            context.Services.AddAbpDbContext<SchoolDbContext>(options =>
+            {
+                /* Remove "includeAllEntities: true" to create
+                 * default repositories only for aggregate roots */
+                options.AddDefaultRepositories(includeAllEntities: true);
+            });
+
             Configure<AbpDbContextOptions>(options =>
             {
                 /* The main point to change your DBMS.
