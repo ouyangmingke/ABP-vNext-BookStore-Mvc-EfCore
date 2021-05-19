@@ -47,14 +47,16 @@ namespace Acme.BookStore.EntityFrameworkCore
             var connection = new SqliteConnection("Data Source=:memory:");
             connection.Open();
 
-            var options = new DbContextOptionsBuilder<BookStoreMigrationsDbContext>()
-                .UseSqlite(connection)
-                .Options;
+            // todo:Microsoft.EntityFrameworkCore 版本不一致
 
-            using (var context = new BookStoreMigrationsDbContext(options))
-            {
-                context.GetService<IRelationalDatabaseCreator>().CreateTables();
-            }
+            //var options = new DbContextOptionsBuilder<BookStoreMigrationsDbContext>()
+            //    .UseSqlite(connection)
+            //    .Options;
+
+            //using (var context = new BookStoreMigrationsDbContext(options))
+            //{
+            //    context.GetService<IRelationalDatabaseCreator>().CreateTables();
+            //}
 
             return connection;
         }
