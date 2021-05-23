@@ -74,6 +74,20 @@ namespace Acme.BookStore
                 };
             });
 
+            Configure<AbpBackgroundJobOptions>(options =>
+            {
+                options.IsJobExecutionEnabled = true; // false 禁用作业执行
+            });
+            // 如果你在集群环境中运行同时运行应用程序的多个实现,
+            // 这种情况下要小心,每个应用程序都运行相同的后台工作者,
+            // 如果你的工作者在相同的资源上运行(例如处理相同的数据),那么可能会产生冲突.
+            // 1、 禁用其他的后台工作者系统,只保留一个实例
+            // 2、 所有的应用程序都禁用后台工作者系统,创建一个特殊的应用程序在一个服务上运行执行工作者
+            Configure<AbpBackgroundWorkerOptions>(options =>
+            {
+                options.IsEnabled = false; // false 禁用后台工作者
+            });
+
             // 注册一个singleton实例
             // IWorker 已经通道继承 ISingletonDependency 实现依赖注入
             // context.Services.AddSingleton<IWorker,Worker>();

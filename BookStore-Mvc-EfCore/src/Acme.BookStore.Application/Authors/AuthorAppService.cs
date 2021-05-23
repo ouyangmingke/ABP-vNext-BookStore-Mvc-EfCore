@@ -14,7 +14,6 @@ namespace Acme.BookStore.Authors
     {
         private readonly IAuthorRepository _authorRepository;
         private readonly AuthorManager _authorManager;
-        public ISettingProvider _settingProvider { get; set; }
 
         public AuthorAppService(
             IAuthorRepository authorRepository,
@@ -24,9 +23,9 @@ namespace Acme.BookStore.Authors
             _authorManager = authorManager;
         }
 
+        [AllowAnonymous]//禁用身份验证
         public async Task<AuthorDto> GetAsync(Guid id)
         {
-            var aa = await _settingProvider.GetOrNullAsync("BookStore.MySetting1");
             var author = await _authorRepository.GetAsync(id);
             return ObjectMapper.Map<Author, AuthorDto>(author);
         }

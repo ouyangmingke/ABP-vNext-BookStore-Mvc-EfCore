@@ -11,6 +11,7 @@ using Microsoft.VisualBasic;
 
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.Settings;
 
 namespace Acme.BookStore.UseCache
 {
@@ -20,7 +21,6 @@ namespace Acme.BookStore.UseCache
     /// </summary>
     public class UseDistributedCache : DomainService
     {
-
         public void Start()
         {
             UseDistributedCache1();

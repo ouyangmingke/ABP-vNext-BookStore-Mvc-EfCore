@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.MSSqlServer;
 
 namespace Acme.BookStore.Web
 {
@@ -12,6 +15,20 @@ namespace Acme.BookStore.Web
     {
         public static int Main(string[] args)
         {
+
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            /***********
+             *  使用Serilog记录日志信息
+             *  MinimumLevel 设置Log打印的最低级别
+             *  MinimumLevel.Override 覆盖日志信息 （日志源,日志级别） 这个级别之下的不记录
+             ***********/
+
+
             Log.Logger = new LoggerConfiguration()
                 // #if  条件编译  详细信息查看 Attribute项目 https://github.com/ouyangmingke/Attribute
 #if DEBUG
@@ -19,10 +36,17 @@ namespace Acme.BookStore.Web
 #else
                 .MinimumLevel.Information()
 #endif
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+                .MinimumLevel.Override("Microsoft", LogEventLevel.Error)
                 .MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Warning)
+                .MinimumLevel.Override("Volo", LogEventLevel.Error)
                 .Enrich.FromLogContext()
                 .WriteTo.Async(c => c.File("Logs/logs.txt"))
+                .WriteTo.Async(c => c.MSSqlServer(configuration["ConnectionStrings:Default"]
+                    , new MSSqlServerSinkOptions
+                    {
+                        TableName = "Logs",
+                        AutoCreateSqlTable = true
+                    }))
                 .CreateLogger();
 
             try

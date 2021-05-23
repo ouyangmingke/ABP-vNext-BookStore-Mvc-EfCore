@@ -20,6 +20,7 @@ namespace Acme.BookStore.BackgroundWorker
         public IServiceScopeFactory ServiceScopeFactory { get; set; }
         public void Start()
         {
+            // 通常在 OnApplicationInitialization 添加工作者
             MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyBackgroundWorkerBase>());
             MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyPeriodicBackgroundWorker>());
             MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyAsyncPeriodicBackgroundWorker>());
