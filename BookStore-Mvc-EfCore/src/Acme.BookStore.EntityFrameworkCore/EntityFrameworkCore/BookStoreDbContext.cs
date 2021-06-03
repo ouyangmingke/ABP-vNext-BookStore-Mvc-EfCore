@@ -1,4 +1,6 @@
-﻿using Acme.BookStore.Authors;
+﻿using System;
+using System.Linq.Expressions;
+using Acme.BookStore.Authors;
 using Acme.BookStore.Books;
 using Microsoft.EntityFrameworkCore;
 using Acme.BookStore.Users;
@@ -64,7 +66,20 @@ namespace Acme.BookStore.EntityFrameworkCore
 
             /* Configure your own tables/entities inside the ConfigureBookStore method */
 
+            // EFCore 全局过滤
+            // builder.Entity<Book>().HasQueryFilter(t => t.Name == "过滤数据");
+
             builder.ConfigureBookStore();
+        }
+
+        /// <summary>
+        /// ABP EFCore 自定义过滤
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
+        protected override Expression<Func<TEntity, bool>> CreateFilterExpression<TEntity>()
+        {
+            return base.CreateFilterExpression<TEntity>();
         }
     }
 }
