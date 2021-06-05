@@ -1,5 +1,6 @@
 ﻿using Acme.BookStore.Authors;
 using Acme.BookStore.Books;
+using Acme.BookStore.Products;
 using Acme.BookStore.School;
 
 using AutoMapper;
@@ -22,8 +23,8 @@ namespace Acme.BookStore
             CreateMap<Author, AuthorDto>();
             CreateMap<Author, AuthorLookupDto>();
 
-            CreateMap<Classes, ClassesDto>();
-            CreateMap<ClassesDto, Classes>();
+            CreateMap<Product, ProductDto>();
+            CreateMap<ProductDto, Product>();
         }
     }
 }

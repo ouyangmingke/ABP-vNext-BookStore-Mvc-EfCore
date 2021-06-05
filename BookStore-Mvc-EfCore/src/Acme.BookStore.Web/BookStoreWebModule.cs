@@ -227,6 +227,7 @@ namespace Acme.BookStore.Web
 
             if (MultiTenancyConsts.IsEnabled)
             {
+                // 多租户中间件
                 app.UseMultiTenancy();
             }
 

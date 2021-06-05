@@ -10,20 +10,22 @@ using Microsoft.Extensions.Configuration;
 
 namespace Acme.BookStore.EntityFrameworkCore
 {
-   public class SchoolMigrationsDbContextFactory : IDesignTimeDbContextFactory<SchoolMigrationsDbContext>
+   public class ProductMigrationsDbContextFactory : IDesignTimeDbContextFactory<ProductMigrationsDbContext>
     {
-        public SchoolMigrationsDbContext CreateDbContext(string[] args)
+        public ProductMigrationsDbContext CreateDbContext(string[] args)
         {
             var configuration = BuildConfiguration();
 
-            var builder = new DbContextOptionsBuilder<SchoolMigrationsDbContext>()
+            var builder = new DbContextOptionsBuilder<ProductMigrationsDbContext>()
                 .UseSqlServer(configuration.GetConnectionString("Default"));
 
-            return new SchoolMigrationsDbContext(builder.Options);
+            return new ProductMigrationsDbContext(builder.Options);
         }
 
         private static IConfigurationRoot BuildConfiguration()
         {
+
+            // 细节： 使用 Path.Combine()  适应不同操作系统
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Acme.BookStore.DbMigrator/"))
                 .AddJsonFile("appsettings.json", optional: false);

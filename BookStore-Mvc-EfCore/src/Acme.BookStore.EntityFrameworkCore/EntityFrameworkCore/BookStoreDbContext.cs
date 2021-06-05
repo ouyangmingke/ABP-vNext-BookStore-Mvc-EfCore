@@ -21,7 +21,7 @@ namespace Acme.BookStore.EntityFrameworkCore
      * Don't use this DbContext for database migrations since it does not contain tables of the
      * used modules (as explained above). See BookStoreMigrationsDbContext for migrations.
      */
-    [ConnectionStringName("Default")]
+    [ConnectionStringName(BookStoreConsts.ConnectionStringName)]
     public class BookStoreDbContext : AbpDbContext<BookStoreDbContext>
     {
         public DbSet<Author> Authors { get; set; }
@@ -66,7 +66,7 @@ namespace Acme.BookStore.EntityFrameworkCore
 
             /* Configure your own tables/entities inside the ConfigureBookStore method */
 
-            // EFCore 全局过滤
+            // EFCore 全局数据过滤
             // builder.Entity<Book>().HasQueryFilter(t => t.Name == "过滤数据");
 
             builder.ConfigureBookStore();

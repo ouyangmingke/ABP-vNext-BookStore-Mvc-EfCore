@@ -23,8 +23,10 @@ namespace Acme.BookStore.EntityFrameworkCore
 
             builder.Entity<Book>(b =>
             {
-                // 配置表名 公用值 应使用常量
-                b.ToTable(BookStoreConsts.DbTablePrefix + "Books", BookStoreConsts.DbSchema);
+                // 配置表名 公用值 应使用常量 避免拼写错误
+                // 表名应该使用  b.Metadata.ClrType.Name 获取该内型名字 
+                // 这里 abp 建表时添加了 s 
+                b.ToTable(BookStoreConsts.DbTablePrefix + b.Metadata.ClrType.Name + "s", BookStoreConsts.DbSchema);
                 b.ConfigureByConvention(); //auto configure for the base class props
 
                 // 配置属性
@@ -35,6 +37,7 @@ namespace Acme.BookStore.EntityFrameworkCore
 
             builder.Entity<Author>(b =>
             {
+                // 
                 b.ToTable(BookStoreConsts.DbTablePrefix + "Authors",
                     BookStoreConsts.DbSchema);
 

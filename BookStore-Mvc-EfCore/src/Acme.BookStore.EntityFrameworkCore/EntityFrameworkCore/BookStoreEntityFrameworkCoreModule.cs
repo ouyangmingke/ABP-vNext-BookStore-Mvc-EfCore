@@ -41,7 +41,7 @@ namespace Acme.BookStore.EntityFrameworkCore
                 options.AddDefaultRepositories(includeAllEntities: true);
             });
 
-            context.Services.AddAbpDbContext<SchoolDbContext>(options =>
+            context.Services.AddAbpDbContext<ProductDbContext>(options =>
             {
                 /* Remove "includeAllEntities: true" to create
                  * default repositories only for aggregate roots */

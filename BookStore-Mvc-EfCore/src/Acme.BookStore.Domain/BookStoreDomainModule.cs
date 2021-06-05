@@ -4,6 +4,7 @@ using Acme.BookStore.BackgroundWorker;
 using Acme.BookStore.Books;
 using Acme.BookStore.LifeCycle;
 using Acme.BookStore.MultiTenancy;
+using Acme.BookStore.MultiTenant;
 using Acme.BookStore.ObjectExtending;
 using Acme.BookStore.UseCache;
 
@@ -11,16 +12,19 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 
 using Volo.Abp;
+using Volo.Abp.AspNetCore.MultiTenancy;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Caching;
+using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.IdentityServer;
 using Volo.Abp.Modularity;
 using Volo.Abp.MultiTenancy;
+using Volo.Abp.MultiTenancy.ConfigurationStore;
 using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.IdentityServer;
 using Volo.Abp.SettingManagement;
@@ -34,11 +38,12 @@ namespace Acme.BookStore
         typeof(AbpBackgroundJobsDomainModule),
         typeof(AbpFeatureManagementDomainModule),
         typeof(AbpIdentityDomainModule),
-        typeof(AbpPermissionManagementDomainIdentityModule),
         typeof(AbpIdentityServerDomainModule),
+        typeof(AbpPermissionManagementDomainIdentityModule),
         typeof(AbpPermissionManagementDomainIdentityServerModule),
         typeof(AbpSettingManagementDomainModule),
         typeof(AbpTenantManagementDomainModule),
+        typeof(AbpAspNetCoreMultiTenancyModule),
         typeof(AbpCachingModule)
         )]
     public class BookStoreDomainModule : AbpModule
@@ -50,10 +55,10 @@ namespace Acme.BookStore
 
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            Configure<AbpMultiTenancyOptions>(options =>
-            {
-                options.IsEnabled = MultiTenancyConsts.IsEnabled;
-            });
+            //配置多租户扩展方法
+            context.ConfigureMultiTenant();
+
+            // 分布式缓存
             Configure<AbpDistributedCacheOptions>(options =>
             {
                 // 设置key前缀
@@ -74,10 +79,12 @@ namespace Acme.BookStore
                 };
             });
 
+            // 后台作业
             Configure<AbpBackgroundJobOptions>(options =>
             {
                 options.IsJobExecutionEnabled = true; // false 禁用作业执行
             });
+
             // 如果你在集群环境中运行同时运行应用程序的多个实现,
             // 这种情况下要小心,每个应用程序都运行相同的后台工作者,
             // 如果你的工作者在相同的资源上运行(例如处理相同的数据),那么可能会产生冲突.

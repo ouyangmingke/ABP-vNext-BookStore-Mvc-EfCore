@@ -5,6 +5,7 @@ namespace Acme.BookStore.Books
 {
     /// <summary>
     /// Book实体继承了AuditedAggregateRoot,
+    /// 聚合根并且增加了审计
     /// AuditedAggregateRoot类在AggregateRoot类的基础上添加了一些审计属性
     /// (CreationTime, CreatorId, LastModificationTime 等).
     /// ABP框架自动为你管理这些属性.

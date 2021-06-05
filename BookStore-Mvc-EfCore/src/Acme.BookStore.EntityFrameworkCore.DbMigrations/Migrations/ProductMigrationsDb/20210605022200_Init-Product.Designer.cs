@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace Acme.BookStore.Migrations.SchoolMigrationsDb
+namespace Acme.BookStore.Migrations.ProductMigrationsDb
 {
-    [DbContext(typeof(SchoolMigrationsDbContext))]
-    [Migration("20210518141111_Up1_addIMultiTenant")]
-    partial class Up1_addIMultiTenant
+    [DbContext(typeof(ProductMigrationsDbContext))]
+    [Migration("20210605022200_Init-Product")]
+    partial class InitProduct
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,18 +23,12 @@ namespace Acme.BookStore.Migrations.SchoolMigrationsDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("Acme.BookStore.School.Classes", b =>
+            modelBuilder.Entity("Acme.BookStore.Products.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<string>("CLassName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CLassNo")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -62,13 +56,19 @@ namespace Acme.BookStore.Migrations.SchoolMigrationsDb
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
                     b.Property<Guid?>("TenantId")
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("TenantId");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Classes");
+                    b.ToTable("AppProduct");
                 });
 #pragma warning restore 612, 618
         }
