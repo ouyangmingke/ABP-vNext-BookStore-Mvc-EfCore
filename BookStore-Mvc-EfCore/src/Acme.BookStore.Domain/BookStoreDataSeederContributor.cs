@@ -28,6 +28,11 @@ namespace Acme.BookStore
             _authorManager = authorManager;
         }
 
+        /// <summary>
+        /// 添加种子数据
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task SeedAsync(DataSeedContext context)
         {
             if (await _bookRepository.GetCountAsync() > 0)

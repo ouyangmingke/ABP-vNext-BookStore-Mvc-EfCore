@@ -4,17 +4,15 @@ using Acme.BookStore.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Volo.Abp.EntityFrameworkCore;
 
-namespace Acme.BookStore.Migrations.SchoolMigrationsDb
+namespace Acme.BookStore.Migrations.ProductMigrationsDb
 {
-    [DbContext(typeof(SchoolMigrationsDbContext))]
-    [Migration("20210518124804_initschool")]
-    partial class initschool
+    [DbContext(typeof(ProductMigrationsDbContext))]
+    partial class ProductMigrationsDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,18 +21,12 @@ namespace Acme.BookStore.Migrations.SchoolMigrationsDb
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("Acme.BookStore.School.Classes", b =>
+            modelBuilder.Entity("Acme.BookStore.Products.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
-
-                    b.Property<string>("CLassName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CLassNo")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -62,9 +54,19 @@ namespace Acme.BookStore.Migrations.SchoolMigrationsDb
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("LastModifierId");
 
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<float>("Price")
+                        .HasColumnType("real");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("TenantId");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Classes");
+                    b.ToTable("AppProduct");
                 });
 #pragma warning restore 612, 618
         }

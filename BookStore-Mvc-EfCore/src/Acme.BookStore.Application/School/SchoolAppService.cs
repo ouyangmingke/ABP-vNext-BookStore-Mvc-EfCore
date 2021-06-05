@@ -11,35 +11,35 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Acme.BookStore.Products;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.School
 {
-    public class SchoolAppService : CrudAppService<Classes, ClassesDto, int, PagedAndSortedResultRequestDto, ClassesDto>, ISchoolService
+    public class SchoolAppService : CrudAppService<Product, ProductDto, int, PagedAndSortedResultRequestDto, ProductDto>, ISchoolService
     {
-        private readonly IRepository<Classes, int> _repository;
+        private readonly IRepository<Product, int> _repository;
 
 
-        public SchoolAppService(IRepository<Classes, int> repository) : base(repository)
+        public SchoolAppService(IRepository<Product, int> repository) : base(repository)
         {
             _repository = repository;
         }
 
-        public override async Task<PagedResultDto<ClassesDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             //await Ins();
             var a = await base.GetListAsync(input);
             return a;
         }
 
-        public async Task<List<ClassesDto>> GetAllClasses()
+        public async Task<List<ProductDto>> GetAllProducts()
         {
             var a = await _repository.GetListAsync();
 
-            var b = ObjectMapper.Map<List<Classes>, List<ClassesDto>>(a);
+            var b = ObjectMapper.Map<List<Product>, List<ProductDto>>(a);
             return b;
         }
     }
