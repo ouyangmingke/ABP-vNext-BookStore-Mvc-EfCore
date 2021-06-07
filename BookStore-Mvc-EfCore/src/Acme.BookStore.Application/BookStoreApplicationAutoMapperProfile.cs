@@ -1,8 +1,6 @@
 ﻿using Acme.BookStore.Authors;
 using Acme.BookStore.Books;
 using Acme.BookStore.Products;
-using Acme.BookStore.School;
-
 using AutoMapper;
 
 namespace Acme.BookStore

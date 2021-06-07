@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Acme.BookStore.Products;
+
 using Volo.Abp.Data;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
@@ -25,7 +26,7 @@ namespace Acme.BookStore.MultiTenant
         /// <summary>
         /// 数据过滤器
         /// </summary>
-        public  IDataFilter DataFilter { get; set; }
+        public IDataFilter DataFilter { get; set; }
 
         /// <summary>
         /// 创建一个新的产品
@@ -62,6 +63,12 @@ namespace Acme.BookStore.MultiTenant
         public async Task<long> GetProductCountAsync()
         {
             // 使用数据过滤器 忽略租户属性
+            // 在 using 语句中使用 DataFilter.Disable 方法创建一个代码块,
+            // IDataFilter.Disable 禁用过滤器
+            // IDataFilter.Enable  启用过滤器
+            // IDataFilter.IsEnabled 判断是否启用过滤器
+            // 其中禁用了 ISoftDelete 过滤器
+            // (始终与 using 搭配使用,确保代码块执行后将过滤重置为之前的状态).
             using (DataFilter.Disable<IMultiTenant>())
             {
                 return await ProductRepository.GetCountAsync();

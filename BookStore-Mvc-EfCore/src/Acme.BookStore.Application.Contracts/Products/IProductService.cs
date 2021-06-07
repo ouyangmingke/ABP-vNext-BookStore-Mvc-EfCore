@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-using Acme.BookStore.Books;
-
-using Volo.Abp.Application.Dtos;
+﻿using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 
-namespace Acme.BookStore.School
+namespace Acme.BookStore.Products
 {
-    public interface ISchoolService
+    public interface IProductService
         : ICrudAppService< //Defines CRUD methods 定义了CRUD方法
         ProductDto, //Used to show books 服务层使用Dto
         int, //Primary key of the book entity  主键

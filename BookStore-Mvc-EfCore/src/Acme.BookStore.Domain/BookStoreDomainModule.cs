@@ -2,6 +2,7 @@
 
 using Acme.BookStore.BackgroundWorker;
 using Acme.BookStore.Books;
+using Acme.BookStore.Filter;
 using Acme.BookStore.LifeCycle;
 using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.MultiTenant;
@@ -55,8 +56,18 @@ namespace Acme.BookStore
 
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
-            //配置多租户扩展方法
+            // 配置多租户扩展方法
             context.ConfigureMultiTenant();
+
+            // 配置数据过滤器
+            Configure<AbpDataFilterOptions>(options =>
+                {
+                    // 设置默认禁用 IIsActive 过滤器
+                    // 除非使用 IDataFilter.Enable  启用过滤器
+                    // 否者在查询数据库时会包含全部实体
+                    options.DefaultStates[typeof(IIsActive)] = new DataFilterState(isEnabled: false);
+                }
+            );
 
             // 分布式缓存
             Configure<AbpDistributedCacheOptions>(options =>

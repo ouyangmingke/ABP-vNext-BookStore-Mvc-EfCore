@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.MultiTenancy;
 
-namespace Acme.BookStore.School
+namespace Acme.BookStore.Products
 {
     public class ProductDto : AuditedEntityDto<int>, IMultiTenant
     {

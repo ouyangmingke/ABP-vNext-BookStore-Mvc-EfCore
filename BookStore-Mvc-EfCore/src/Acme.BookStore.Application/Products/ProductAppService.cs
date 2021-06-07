@@ -11,19 +11,18 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Acme.BookStore.Products;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace Acme.BookStore.School
+namespace Acme.BookStore.Products
 {
-    public class SchoolAppService : CrudAppService<Product, ProductDto, int, PagedAndSortedResultRequestDto, ProductDto>, ISchoolService
+    public class ProductAppService : CrudAppService<Product, ProductDto, int, PagedAndSortedResultRequestDto, ProductDto>, IProductService
     {
         private readonly IRepository<Product, int> _repository;
 
 
-        public SchoolAppService(IRepository<Product, int> repository) : base(repository)
+        public ProductAppService(IRepository<Product, int> repository) : base(repository)
         {
             _repository = repository;
         }

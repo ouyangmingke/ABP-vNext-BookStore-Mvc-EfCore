@@ -1,8 +1,11 @@
 ﻿using System;
 using System.IO;
 
+using Acme.BookStore.EntityFrameworkCore;
+
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Serilog;
@@ -52,7 +55,26 @@ namespace Acme.BookStore.Web
             try
             {
                 Log.Information("Starting web host.");
-                CreateHostBuilder(args).Build().Run();
+                var host = CreateHostBuilder(args).Build();
+
+                // 创建一个“作用域”级别的服务实例 用完就丢弃 using
+                using (IServiceScope scope = host.Services.CreateScope())
+                {
+                    BookStoreDbContext bookStoreDbContext = scope.ServiceProvider.GetService<BookStoreDbContext>();
+
+                    // EnsureCreated 方法会检测数据库是否存在，如果不存在，就创建，然后返回 true；
+                    // 如果数据库已经存在，不做任何处理并返回 false。
+                    var exist = bookStoreDbContext.Database.EnsureCreated();
+
+                    if (exist)
+                    {
+                        // 写入初始化数据
+                    }
+
+                }
+
+                host.Run();
+
                 return 0;
             }
             catch (Exception ex)
