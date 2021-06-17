@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Acme.BookStore.BackgroundWorker;
 using Acme.BookStore.Books;
@@ -52,12 +53,59 @@ namespace Acme.BookStore
         public override void PreConfigureServices(ServiceConfigurationContext context)
         {
             BookStoreDomainObjectExtensions.Configure();
+            //SkipAutoServiceRegistration = true;// 禁用 ABP 自动注册
+            AutoAddDataSyncSynchronizerProviders(context.Services);
+        }
+
+        /// <summary>
+        /// 手动拦截服务
+        /// </summary>
+        /// <param name="services"></param>
+        private static void AutoAddDataSyncSynchronizerProviders(IServiceCollection services)
+        {
+            var works = new List<Type>();
+            services.OnRegistred(context =>
+            {
+
+                //  IValidationEnabled 拦截器
+                //if (typeof(IValidationEnabled).IsAssignableFrom(context.ImplementationType))
+                //{
+                //    context.Interceptors.TryAdd<ValidationInterceptor>();
+                //}
+
+                // public virtual bool IsAssignableFrom (Type? c);
+                // c 和当前实例表示相同类型
+                // c 是从当前实例直接或间接派生的 当前实例是
+                // c 实现的一个接口
+                //          c 是一个泛型类型参数，并且当前实例表示 c 的约束之一
+                //          泛型参数需要一致
+                // c 表示一个值类型，并且当前实例表示 Nullable<c>
+
+                // ImplementationType 提供服务类型
+                if (typeof(IWorker).IsAssignableFrom(context.ImplementationType))
+                {
+                    works.Add(context.ImplementationType);
+                }
+            });
+
+            services.Configure<WorkerOptions>(option =>
+            {
+                // 将获取到的 work 添加到 WorkerOptions 中然后 可以使用多个 实现
+                foreach (var work in works)
+                {
+                    option.BackgroundWorkers.Add(work);
+                }
+            });
         }
 
         public override void ConfigureServices(ServiceConfigurationContext context)
         {
             // 配置多租户扩展方法
             context.ConfigureMultiTenant();
+
+            // 手动注入 禁用ABP自动注入后
+            // context.Services.AddAssemblyOf<Worker>();
+
 
             // 配置数据过滤器
             Configure<AbpDataFilterOptions>(options =>
@@ -120,6 +168,7 @@ namespace Acme.BookStore
         public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
         {
             Console.WriteLine("应用初始化之前");
+
             context.ServiceProvider.GetService<Singleton>().StartAsync();
             var scoped = context.ServiceProvider.GetService<Scoped>();
             scoped.StartAsync();

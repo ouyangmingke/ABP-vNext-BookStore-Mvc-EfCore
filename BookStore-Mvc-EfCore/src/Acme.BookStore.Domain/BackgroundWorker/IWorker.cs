@@ -8,7 +8,7 @@ using Volo.Abp.DependencyInjection;
 
 namespace Acme.BookStore.BackgroundWorker
 {
-   public interface IWorker: ISingletonDependency
+   public interface IWorker
     {
         public void Start();
     }

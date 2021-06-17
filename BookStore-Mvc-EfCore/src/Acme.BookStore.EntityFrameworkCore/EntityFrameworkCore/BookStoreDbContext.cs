@@ -80,7 +80,12 @@ namespace Acme.BookStore.EntityFrameworkCore
 
             // 只要 绑定了 Blog Id 的 Posts 数据
             // 配置一个关系，其中此实体类型具有包含关系中其他类型实例的集合。
+            // 这个写法可能会出现问题 如果Blog数据被筛选
+            // 使用Include查询Posts相关数据时 EF Core 会使用INNER JOIN在进行查询
+            // 将导致过滤器将过滤掉所有与已过滤Blog相关的Post。
+            // 解决方案可以是 使用  .IsRequired(false)   或者 禁用过滤器
             // builder.Entity<Blog>().HasMany(b => b.Posts).WithOne(p => p.Blog).IsRequired();
+
             // 过滤Name为空的数据
             builder.Entity<Book>().HasQueryFilter(t => t.Name.IsNullOrEmpty());
 
@@ -102,7 +107,7 @@ namespace Acme.BookStore.EntityFrameworkCore
         {
             var expression = base.CreateFilterExpression<TEntity>();
 
-            // 检查实体是否使用了 IsActive
+            // 检查实体是否拥有 IsActive 属性
             if (typeof(IIsActive).IsAssignableFrom(typeof(TEntity)))
             {
                 Expression<Func<TEntity, bool>> isActiveFilter =
