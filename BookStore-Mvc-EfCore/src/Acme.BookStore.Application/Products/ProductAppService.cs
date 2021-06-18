@@ -11,6 +11,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -21,17 +22,16 @@ namespace Acme.BookStore.Products
     {
         private readonly IRepository<Product, int> _repository;
 
-
         public ProductAppService(IRepository<Product, int> repository) : base(repository)
         {
             _repository = repository;
         }
 
-        public override async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public Task<List<ProductDto>> GetProductsByDbContext()
         {
-            //await Ins();
-            var a = await base.GetListAsync(input);
-            return a;
+
+            //_repository.get
+            return null;
         }
 
         public async Task<List<ProductDto>> GetAllProducts()

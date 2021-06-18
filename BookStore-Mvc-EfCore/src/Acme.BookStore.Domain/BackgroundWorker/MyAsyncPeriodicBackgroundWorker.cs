@@ -17,7 +17,7 @@ namespace Acme.BookStore.BackgroundWorker
     /// </summary>
     public class MyAsyncPeriodicBackgroundWorker : AsyncPeriodicBackgroundWorkerBase
     {
-        public MyAsyncPeriodicBackgroundWorker(AbpTimer timer, IServiceScopeFactory serviceScopeFactory) : base(timer, serviceScopeFactory)
+        public MyAsyncPeriodicBackgroundWorker(AbpAsyncTimer timer, IServiceScopeFactory serviceScopeFactory) : base(timer, serviceScopeFactory)
         {
             timer.Period = 1000;
         }
