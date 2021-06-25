@@ -18,7 +18,8 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Products
 {
-    public class ProductAppService : CrudAppService<Product, ProductDto, int, PagedAndSortedResultRequestDto, ProductDto>, IProductService
+    public class ProductAppService : CrudAppService<Product, ProductDto, int, 
+        PagedAndSortedResultRequestDto, ProductDto>, IProductService
     {
         private readonly IRepository<Product, int> _repository;
 
@@ -30,7 +31,6 @@ namespace Acme.BookStore.Products
         public Task<List<ProductDto>> GetProductsByDbContext()
         {
 
-            //_repository.get
             return null;
         }
 
@@ -40,6 +40,11 @@ namespace Acme.BookStore.Products
 
             var b = ObjectMapper.Map<List<Product>, List<ProductDto>>(a);
             return b;
+        }
+
+        public  Task<ProductDto> CreatePPAsync(string  name)
+        {
+            return  null;
         }
     }
 }
