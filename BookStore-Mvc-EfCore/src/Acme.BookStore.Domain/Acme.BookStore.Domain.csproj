@@ -8,6 +8,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Books\Book.Domain.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Books\Book.Domain.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Acme.BookStore.Domain.Shared\Acme.BookStore.Domain.Shared.csproj" />
   </ItemGroup>
 

@@ -8,6 +8,7 @@ using Volo.Abp.Domain.Entities.Auditing;
 namespace Acme.BookStore.Authors
 {
     /// <summary>
+    /// 聚合根
     /// 继承自FullAuditedAggregateRoot<Guid>其中后，将使用所有审核属性对实体进行软删除
     /// （这意味着在删除实体时，它不会在数据库中删除，而只是标记为已删除）。
     /// </summary>

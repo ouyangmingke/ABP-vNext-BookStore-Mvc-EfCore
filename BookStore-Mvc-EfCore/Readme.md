@@ -2,6 +2,8 @@
 
 
 
+![domain-driven-design-layers](https://raw.githubusercontent.com/abpframework/abp/rel-4.3/docs/zh-Hans/images/domain-driven-design-layers.png
+
 ## DDD  Domain Driven Design   领域驱动设计
 
 重点：

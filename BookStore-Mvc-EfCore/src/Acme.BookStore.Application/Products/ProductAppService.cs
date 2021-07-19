@@ -18,7 +18,7 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Products
 {
-    public class ProductAppService : CrudAppService<Product, ProductDto, int, 
+    public class ProductAppService : CrudAppService<Product, ProductDto, int,
         PagedAndSortedResultRequestDto, ProductDto>, IProductService
     {
         private readonly IRepository<Product, int> _repository;
@@ -28,10 +28,12 @@ namespace Acme.BookStore.Products
             _repository = repository;
         }
 
-        public Task<List<ProductDto>> GetProductsByDbContext()
+        public void GetProductsByDbContext()
         {
-
-            return null;
+            // 无法获取DBContext  因为Application 没有依赖 EntityFrameworkCore  无法使用扩展方法
+            // 根据数据库独立原则 应用层和领域层 应只通过领域层定义的接口进行数据访问
+            // 避免因为切换数据库导致的重写
+            return;
         }
 
         public async Task<List<ProductDto>> GetAllProducts()
@@ -42,9 +44,9 @@ namespace Acme.BookStore.Products
             return b;
         }
 
-        public  Task<ProductDto> CreatePPAsync(string  name)
+        public Task<ProductDto> CreatePPAsync(string name)
         {
-            return  null;
+            return null;
         }
     }
 }

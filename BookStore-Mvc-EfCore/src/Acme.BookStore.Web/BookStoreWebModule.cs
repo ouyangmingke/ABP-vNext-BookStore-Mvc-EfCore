@@ -220,10 +220,10 @@ namespace Acme.BookStore.Web
             }
 
             app.UseCorrelationId();
-            app.UseVirtualFiles();
+            app.UseStaticFiles();
             app.UseRouting();
-            app.UseAuthentication();
-            app.UseJwtTokenMiddleware();
+            app.UseAuthentication();// 使用身份验证中间件
+            app.UseJwtTokenMiddleware();// 使用Jwt令牌
 
             if (MultiTenancyConsts.IsEnabled)
             {

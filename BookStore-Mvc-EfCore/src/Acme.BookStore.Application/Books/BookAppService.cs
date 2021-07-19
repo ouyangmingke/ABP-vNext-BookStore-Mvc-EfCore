@@ -12,6 +12,7 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Entities;
 using Volo.Abp.Domain.Repositories;
+using Volo.Abp.Specifications;
 
 namespace Acme.BookStore.Books
 {
@@ -50,6 +51,16 @@ namespace Acme.BookStore.Books
             UpdatePolicyName = BookStorePermissions.Books.Edit;
             DeletePolicyName = BookStorePermissions.Books.Create;
         }
+
+        public IBookRepository BookRepository { get; set; }
+        public async Task<List<Book>> GetAllIsInActiveAsync()
+        {
+            return await BookRepository.GetAllIsInActiveAsync(
+                new InActiveBookSpecification()
+                    .And(new InActiveBookSpecification())// 用使展扩法方法 组合规约
+                    );
+        }
+
 
         public override async Task<BookDto> GetAsync(Guid id)
         {
