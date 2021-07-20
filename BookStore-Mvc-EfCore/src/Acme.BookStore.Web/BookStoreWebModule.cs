@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Localization.Resources.AbpUi;
 using Microsoft.AspNetCore;
@@ -13,6 +14,7 @@ using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.Permissions;
 using Acme.BookStore.Web.Menus;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Volo.Abp;
@@ -200,9 +202,62 @@ namespace Acme.BookStore.Web
             services.AddSwaggerGen(
                 options =>
                 {
-                    options.SwaggerDoc("v1", new OpenApiInfo { Title = "BookStore API", Version = "v1" });
+                    // 这里可以创建多个 Swagger 文档
+                    options.SwaggerDoc("v1", new OpenApiInfo
+                    {
+                        Title = "BookStore API",
+                        Version = "v1",
+                        Description = "BookStore 接口文档说明",
+                        TermsOfService = new Uri("http://tempuri.org/terms "),// 服务条款
+                        Contact = new OpenApiContact()// 联系方式
+                        {
+                            Name = "GitHub： Swashbuckle.AspNetCore",
+                            Email = "XXX@gmail.con",// OpenAPI接口规范文档  https://swagger.io/specification/#oasObject
+                            Url = new Uri("https://github.com/domaindrivendev/Swashbuckle.AspNetCore")
+                        },
+                        License = new OpenApiLicense()// 许可证信息
+                        {
+                            Name = "许可证： Apache 2.0",
+                            Url = new Uri("http://www.apache.org/licenses/LICENSE-2.0.html")
+                        }
+                    });
+
+                    // 自定义文档选择 更具文档名称和文档描述  进行选择   这里未筛选
                     options.DocInclusionPredicate((docName, description) => true);
+
+                    // 避免命名空间不同但是名称相同  使用全名进行区分
                     options.CustomSchemaIds(type => type.FullName);
+
+                    #region 添加安全定义和要求
+                    // 定义安全方案
+                    options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
+                    {
+                        Description = "在下框中输入请求头中需要添加Jwt授权Token：Bearer Token",// 方案描述
+                        Name = "Authorization",// token 名称
+                        In = ParameterLocation.Header,// token 所在位置
+                        Type = SecuritySchemeType.ApiKey,// 方案类型
+                        BearerFormat = "JWT",// 提示客户端识别无记名令牌是如何格式化
+                        Scheme = "Bearer"// 使用 HTTP 授权模式的名称  RFC 7235: Authentication 协议
+
+                    });
+
+                    // 指明方案适用于哪些操作  全局应用方案
+                    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                    {
+                        {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "ApiKey" // 指定方案
+                                }
+                            },
+                            new string[] { }// 应用非“oauth2”类型的方案时，范围数组必须为空。
+                        }
+                    });
+                    #endregion
+
+
                 }
             );
         }
