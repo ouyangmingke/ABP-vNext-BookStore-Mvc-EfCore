@@ -27,7 +27,7 @@ namespace Acme.BookStore.Books
         /// <param name="authorId"></param>
         /// <param name="price"></param>
         /// <param name="publishDate"></param>
-        public Book(BookType type, string name, Guid authorId, float price, DateTime publishDate)
+        public Book(Guid authorId, string name, BookType type, DateTime publishDate, float price)
         {
             Type = type;
             Name = Check.NotNullOrWhiteSpace(Name, nameof(Name)); // 参数必须检查有效性.

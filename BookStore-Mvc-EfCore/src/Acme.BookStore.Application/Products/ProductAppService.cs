@@ -35,7 +35,10 @@ namespace Acme.BookStore.Products
             // 避免因为切换数据库导致的重写
             return;
         }
-
+        /// <summary>
+        /// 获取全部产品
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<ProductDto>> GetAllProducts()
         {
             var a = await _repository.GetListAsync();

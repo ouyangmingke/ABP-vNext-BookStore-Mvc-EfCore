@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+
 using Acme.BookStore.Authors;
 using Acme.BookStore.Books;
+
 using Volo.Abp.Data;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Domain.Repositories;
@@ -58,25 +60,25 @@ namespace Acme.BookStore
 
             await _bookRepository.InsertAsync(
                 new Book
-                {
-                    AuthorId = orwell.Id,
-                    Name = "1984",
-                    Type = BookType.Dystopia,
-                    PublishDate = new DateTime(1949, 6, 8),
-                    Price = 19.84f
-                },
+                (
+                  orwell.Id,
+                 "1984",
+                   BookType.Dystopia,
+                    new DateTime(1949, 6, 8),
+                    19.84f
+                ),
                 autoSave: true
             );
 
             await _bookRepository.InsertAsync(
                 new Book
-                {
-                    AuthorId = douglas.Id,
-                    Name = "The Hitchhiker's Guide to the Galaxy",
-                    Type = BookType.ScienceFiction,
-                    PublishDate = new DateTime(1995, 9, 27),
-                    Price = 42.0f
-                },
+                (
+                   douglas.Id,
+                 "The Hitchhiker's Guide to the Galaxy",
+                 BookType.ScienceFiction,
+                   new DateTime(1995, 9, 27),
+                   42.0f
+                ),
                 autoSave: true
             );
         }

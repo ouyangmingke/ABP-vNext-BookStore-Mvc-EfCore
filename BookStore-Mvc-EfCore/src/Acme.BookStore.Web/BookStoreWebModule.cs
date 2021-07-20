@@ -121,7 +121,9 @@ namespace Acme.BookStore.Web
         /// <param name="configuration"></param>
         private void ConfigureAuthentication(ServiceConfigurationContext context, IConfiguration configuration)
         {
+            // 开启身份验证
             context.Services.AddAuthentication()
+                // 添加JwtBearer服务
                 .AddJwtBearer(options =>
                 {
                     options.Authority = configuration["AuthServer:Authority"];
