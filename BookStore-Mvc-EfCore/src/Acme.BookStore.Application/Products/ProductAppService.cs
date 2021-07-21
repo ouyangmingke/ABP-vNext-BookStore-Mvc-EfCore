@@ -12,12 +12,15 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Mvc;
+
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Products
 {
+    [ApiExplorerSettings(GroupName = "Product")]
     public class ProductAppService : CrudAppService<Product, ProductDto, int,
         PagedAndSortedResultRequestDto, ProductDto>, IProductService
     {
