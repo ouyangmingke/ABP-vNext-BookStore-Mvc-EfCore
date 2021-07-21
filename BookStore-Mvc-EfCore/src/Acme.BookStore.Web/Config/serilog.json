@@ -1,0 +1,180 @@
+﻿{
+  "Serilog": {
+    "Using": [ "Serilog.Sinks.File", "Serilog.Expressions" ],
+    "MinimumLevel": {
+      "Default": "Debug",
+      "Override": {
+        "Microsoft": "Warning",
+        "System": "Warning",
+        "Microsoft.AspNetCore": "Error",
+        "Microsoft.AspNetCore.Cors.Infrastructure.CorsService": "Error",
+        "Volo.Abp": "Warning",
+        "Microsoft.AspNetCore.Hosting": "Error"
+      }
+    },
+    "WriteTo:Debug": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "Filter": [
+            {
+              "Name": "ByIncludingOnly",
+              "Args": {
+                "expression": "@l = 'Debug'"
+              }
+            }
+          ],
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs/Debug-.txt",
+                      "rollingInterval": "Day",
+                      "retainedFileCountLimit": 7
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WriteTo:Information": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "Filter": [
+            {
+              "Name": "ByIncludingOnly",
+              "Args": {
+                "expression": "@l = 'Information'"
+              }
+            }
+          ],
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs/Info-.txt",
+
+                      "rollingInterval": "Day",
+                      "retainedFileCountLimit": 7
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WriteTo:Warning": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "Filter": [
+            {
+              "Name": "ByIncludingOnly",
+              "Args": {
+                "expression": "@l = 'Warning'"
+              }
+            }
+          ],
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs/Warning-.txt",
+
+                      "rollingInterval": "Day",
+                      "retainedFileCountLimit": 7
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WriteTo:Error": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "Filter": [
+            {
+              "Name": "ByIncludingOnly",
+              "Args": {
+                "expression": "@l = 'Error'"
+              }
+            }
+          ],
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs/Error-.txt",
+
+                      "rollingInterval": "Day",
+                      "retainedFileCountLimit": 7
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "WriteTo:Fatal": {
+      "Name": "Logger",
+      "Args": {
+        "configureLogger": {
+          "Filter": [
+            {
+              "Name": "ByIncludingOnly",
+              "Args": {
+                "expression": "@l = 'Fatal'"
+              }
+            }
+          ],
+          "WriteTo": [
+            {
+              "Name": "Async",
+              "Args": {
+                "configure": [
+                  {
+                    "Name": "File",
+                    "Args": {
+                      "path": "Logs/Fatal-.txt",
+
+                      "rollingInterval": "Day",
+                      "retainedFileCountLimit": 7
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  }
+}
