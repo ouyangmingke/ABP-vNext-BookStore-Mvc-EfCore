@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using Localization.Resources.AbpUi;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -13,10 +15,12 @@ using Acme.BookStore.Localization;
 using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.Permissions;
 using Acme.BookStore.Web.Menus;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.OpenApi.Interfaces;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
@@ -189,6 +193,9 @@ namespace Acme.BookStore.Web
             });
         }
 
+        /// <summary>
+        /// 自动API控制器配置
+        /// </summary>
         private void ConfigureAutoApiControllers()
         {
             Configure<AbpAspNetCoreMvcOptions>(options =>
@@ -197,6 +204,10 @@ namespace Acme.BookStore.Web
             });
         }
 
+        /// <summary>
+        /// 配置 Swagger
+        /// </summary>
+        /// <param name="services"></param>
         private void ConfigureSwaggerServices(IServiceCollection services)
         {
             services.AddSwaggerGen(
@@ -208,42 +219,105 @@ namespace Acme.BookStore.Web
                         Title = "BookStore API",
                         Version = "v1",
                         Description = "BookStore 接口文档说明",
-                        TermsOfService = new Uri("http://tempuri.org/terms "),// 服务条款
-                        Contact = new OpenApiContact()// 联系方式
+                        TermsOfService = new Uri("http://tempuri.org/terms "), // 服务条款
+                        Contact = new OpenApiContact() // 联系方式
                         {
                             Name = "GitHub： Swashbuckle.AspNetCore",
-                            Email = "XXX@gmail.con",// OpenAPI接口规范文档  https://swagger.io/specification/#oasObject
+                            Email = "XXX@gmail.con", // OpenAPI接口规范文档  https://swagger.io/specification/#oasObject
                             Url = new Uri("https://github.com/domaindrivendev/Swashbuckle.AspNetCore")
                         },
-                        License = new OpenApiLicense()// 许可证信息
+                        License = new OpenApiLicense() // 许可证信息
                         {
                             Name = "许可证： Apache 2.0",
                             Url = new Uri("http://www.apache.org/licenses/LICENSE-2.0.html")
                         }
                     });
 
-                    // 自定义文档选择 更具文档名称和文档描述  进行选择   这里未筛选
-                    options.DocInclusionPredicate((docName, description) => true);
+                    options.SwaggerDoc("Product", new OpenApiInfo
+                    {
+                        Title = "Product API",
+                        Version = "Product",
+                        Description = "Products 接口文档说明",
+                        TermsOfService = new Uri("http://tempuri.org/terms "), // 服务条款
+                        Contact = new OpenApiContact() // 联系方式
+                        {
+                            Name = "GitHub： Swashbuckle.AspNetCore",
+                            Email = "XXX@gmail.con", // OpenAPI接口规范文档  https://swagger.io/specification/#oasObject
+                            Url = new Uri("https://github.com/domaindrivendev/Swashbuckle.AspNetCore")
+                        },
+                        License = new OpenApiLicense() // 许可证信息
+                        {
+                            Name = "许可证： Apache 2.0",
+                            Url = new Uri("http://www.apache.org/licenses/LICENSE-2.0.html")
+                        }
+                    });
+
+                    // 自定义文档选择 更具文档名称和文档描述  进行选择
+                    // 这里通过 ApiExplorerSettingsAttribute 进行筛选
+                    // ApiExplorerSettingsAttribute 仅对标记类有效 所以继承的Crud 没有分组信息 
+                    options.DocInclusionPredicate((docName, description) =>
+                        {
+                            // 尝试获取方法信息
+                            if (!description.TryGetMethodInfo(out MethodInfo method))
+                            {
+                                return false;
+                            }
+
+                            // 获取方法中 ApiExplorerSettingsAttribute 属性  GroupName 值
+                            if (method.DeclaringType == null)
+                            {
+                                return false;
+                            }
+
+                            var version = method.DeclaringType.GetCustomAttributes(true)
+                                .OfType<ApiExplorerSettingsAttribute>().Select(m => m.GroupName).ToList();
+
+                            // 未定义分组 或 分组名称与当前分组名称一致 通过筛选
+                            return !version.Any() || version.Any(v => v == docName);
+
+                        }
+                    );
 
                     // 避免命名空间不同但是名称相同  使用全名进行区分
                     options.CustomSchemaIds(type => type.FullName);
 
                     #region 添加安全定义和要求
-                    // 定义安全方案
+
+
+                    // 定义安全方案 使用 Http
+                    //options.AddSecurityDefinition("Http", new OpenApiSecurityScheme()
+                    //{
+                    //    Description = "这是方式一(直接在输入框中输入认证信息，不需要在开头添加Bearer)",
+                    //    Name = "Authorization",//jwt默认的参数名称
+                    //    In = ParameterLocation.Header,//jwt默认存放Authorization信息的位置(请求头中)
+                    //    Type = SecuritySchemeType.Http,
+                    //    Scheme = "Http"
+                    //});
+
+                    // 定义安全方案 使用 ApiKey
                     options.AddSecurityDefinition("ApiKey", new OpenApiSecurityScheme()
                     {
-                        Description = "在下框中输入请求头中需要添加Jwt授权Token：Bearer Token",// 方案描述
+                        Description = "ApiKey 在下框中输入请求头中需要添加Jwt授权 Token：Bearer Token",// 方案描述
                         Name = "Authorization",// token 名称
                         In = ParameterLocation.Header,// token 所在位置
                         Type = SecuritySchemeType.ApiKey,// 方案类型
                         BearerFormat = "JWT",// 提示客户端识别无记名令牌是如何格式化
-                        Scheme = "Bearer"// 使用 HTTP 授权模式的名称  RFC 7235: Authentication 协议
-
+                        Scheme = "ApiKey"// 使用 HTTP 授权模式的名称  RFC 7235: Authentication 协议
                     });
 
                     // 指明方案适用于哪些操作  全局应用方案
                     options.AddSecurityRequirement(new OpenApiSecurityRequirement
                     {
+                        //{
+                        //    new OpenApiSecurityScheme
+                        //    {
+                        //        Reference = new OpenApiReference {
+                        //            Type = ReferenceType.SecurityScheme,
+                        //            Id = "Http" // 指定方案
+                        //        }
+                        //    },
+                        //    new string[] { }// 应用非“oauth2”类型的方案时，范围数组必须为空。
+                        //},
                         {
                             new OpenApiSecurityScheme
                             {
@@ -256,7 +330,6 @@ namespace Acme.BookStore.Web
                         }
                     });
                     #endregion
-
 
                 }
             );
@@ -295,6 +368,7 @@ namespace Acme.BookStore.Web
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/v1/swagger.json", "BookStore API");
+                options.SwaggerEndpoint("/swagger/Product/swagger.json", "Products API");
             });
             app.UseAuditing();
             app.UseAbpSerilogEnrichers();
