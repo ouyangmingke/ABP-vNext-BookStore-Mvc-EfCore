@@ -88,7 +88,15 @@ namespace Acme.BookStore.Web
         {
             var hostingEnvironment = context.Services.GetHostingEnvironment();
             var configuration = context.Services.GetConfiguration();
-
+            context.Services.AddCors(o =>
+            {
+                o.AddPolicy("policy", configuration =>
+                {
+                    configuration.AllowAnyHeader();
+                    configuration.AllowAnyOrigin();
+                    configuration.AllowAnyMethod();
+                });
+            });
             ConfigureUrls(configuration);
             ConfigureAuthentication(context, configuration);
             ConfigureAutoMapper();
@@ -100,12 +108,13 @@ namespace Acme.BookStore.Web
 
             // 获取配置并使用  RazorPagesOptions 的可以在预配置中修改
             // 没有权限的用户将被重定向到登录页面
-            //Configure<RazorPagesOptions>(options =>
-            //{
-            //    options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
-            //    options.Conventions.AuthorizePage("/Books/CreateModal", BookStorePermissions.Books.Create);
-            //    options.Conventions.AuthorizePage("/Books/EditModal", BookStorePermissions.Books.Edit);
-            //});
+            // 为页面添加权限
+            Configure<RazorPagesOptions>(options =>
+            {
+                options.Conventions.AuthorizePage("/Books/Index", BookStorePermissions.Books.Default);
+                options.Conventions.AuthorizePage("/Books/CreateModal", BookStorePermissions.Books.Create);
+                options.Conventions.AuthorizePage("/Books/EditModal", BookStorePermissions.Books.Edit);
+            });
         }
 
         /// <summary>
@@ -352,6 +361,8 @@ namespace Acme.BookStore.Web
             app.UseCorrelationId();
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseCors("policy");
             app.UseAuthentication();// 使用身份验证中间件
             app.UseJwtTokenMiddleware();// 使用Jwt令牌
 

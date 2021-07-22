@@ -6,3 +6,6 @@
 
 
 
+ABP 权限  IPermissionStore  这里
+
+AbpPermissionGrants   记录 用户权限 信息
