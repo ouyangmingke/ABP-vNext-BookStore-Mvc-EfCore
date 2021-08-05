@@ -21,13 +21,18 @@ namespace Acme.BookStore.Settings
 
         public override async Task StartAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            // 设置需要在 SettingDefinitionProvider 进行配置
+            // 设置需要在 SettingDefinitionProvider 进行定义
+            string userName1 = await SettingProvider.GetOrNullAsync("BookStore.DEV");
+            string userName2 = await SettingManager.GetOrNullConfigurationAsync("BookStore.DEV");
+            string userName3 = await SettingManager.GetOrNullAsync("BookStore.DEV", "G", "G");
 
             await SettingManager.SetGlobalAsync("BookStore.DEV", "NODEV");
+
             string userName = await SettingProvider.GetOrNullAsync("Abp.Mailing.Smtp.Host");
             string a = await SettingProvider.GetOrNullAsync("BookStore.DEV");
             string b = await SettingProvider.GetOrNullAsync("sett1");
             string c = await SettingProvider.GetOrNullAsync("sett2");
+            //  string d = await SettingProvider.GetAllAsync();
 
         }
     }

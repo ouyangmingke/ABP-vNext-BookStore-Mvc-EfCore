@@ -4,7 +4,7 @@
 
 
 
-### 定义设置  SettingDefinition
+### 定义设置  SettingDefinition                  定义之后才能使用 Setting
 
 `SettingDefinition` 类具有以下属性:
 
@@ -215,7 +215,9 @@ namespace Demo
 
 
 
-## Setting Management Providers
+## Setting Management Providers 设置提供程序
+
+#### 设置优先级 D<C<G<T<U   
 
 设置管理模块是可扩展的,像[设置系统](https://docs.abp.io/zh-Hans/abp/latest/Settings)一样. 你可以通过自定义设置管理提供程序进行扩展. 有5个预构建的设置管理程序程序按以下顺序注册:
 

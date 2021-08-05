@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 
 using Acme.BookStore.BackgroundWorker;
-using Acme.BookStore.Books;
 using Acme.BookStore.Filter;
 using Acme.BookStore.LifeCycle;
-using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.MultiTenant;
 using Acme.BookStore.ObjectExtending;
 using Acme.BookStore.UseCache;
@@ -20,17 +18,15 @@ using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Caching;
 using Volo.Abp.Data;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.IdentityServer;
 using Volo.Abp.Modularity;
-using Volo.Abp.MultiTenancy;
-using Volo.Abp.MultiTenancy.ConfigurationStore;
 using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.IdentityServer;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.Validation;
 
 namespace Acme.BookStore
 {
@@ -38,6 +34,7 @@ namespace Acme.BookStore
         typeof(BookStoreDomainSharedModule),
         typeof(AbpAuditLoggingDomainModule),
         typeof(AbpBackgroundJobsDomainModule),
+        typeof(AbpBackgroundWorkersModule),
         typeof(AbpFeatureManagementDomainModule),
         typeof(AbpIdentityDomainModule),
         typeof(AbpIdentityServerDomainModule),
@@ -66,13 +63,6 @@ namespace Acme.BookStore
             var works = new List<Type>();
             services.OnRegistred(context =>
             {
-
-                //  IValidationEnabled 拦截器
-                //if (typeof(IValidationEnabled).IsAssignableFrom(context.ImplementationType))
-                //{
-                //    context.Interceptors.TryAdd<ValidationInterceptor>();
-                //}
-
                 // public virtual bool IsAssignableFrom (Type? c);
                 // c 和当前实例表示相同类型
                 // c 是从当前实例直接或间接派生的 当前实例是
@@ -106,7 +96,6 @@ namespace Acme.BookStore
             // 手动注入 禁用ABP自动注入后
             // context.Services.AddAssemblyOf<Worker>();
 
-
             // 配置数据过滤器
             Configure<AbpDataFilterOptions>(options =>
                 {
@@ -138,10 +127,23 @@ namespace Acme.BookStore
                 };
             });
 
+            ConfigureBackgroundServices();
+
+            // 注册一个singleton实例
+            // IWorker 已经通道继承 ISingletonDependency 实现依赖注入
+            // context.Services.AddSingleton<IWorker,Worker>();
+
+        }
+
+        /// <summary>
+        /// 配置后台服务
+        /// </summary>
+        private void ConfigureBackgroundServices()
+        {
             // 后台作业
             Configure<AbpBackgroundJobOptions>(options =>
             {
-                options.IsJobExecutionEnabled = true; // false 禁用作业执行
+                options.IsJobExecutionEnabled = false; // false 禁用作业执行
             });
 
             // 如果你在集群环境中运行同时运行应用程序的多个实现,
@@ -153,13 +155,7 @@ namespace Acme.BookStore
             {
                 options.IsEnabled = false; // false 禁用后台工作者
             });
-
-            // 注册一个singleton实例
-            // IWorker 已经通道继承 ISingletonDependency 实现依赖注入
-            // context.Services.AddSingleton<IWorker,Worker>();
-
         }
-
 
         /// <summary>
         /// 应用初始化之前
@@ -167,12 +163,16 @@ namespace Acme.BookStore
         /// <param name="context"></param>
         public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
         {
-            Console.WriteLine("应用初始化之前");
-
-            context.ServiceProvider.GetService<Singleton>().StartAsync();
-            var scoped = context.ServiceProvider.GetService<Scoped>();
-            scoped.StartAsync();
-            context.ServiceProvider.GetService<Transient>().StartAsync();
+            /***
+             *
+             * ConfigureAwait 指定参数为false，即使有当前上下文或调度程序用于回调，它也会假装没有
+             * 如果await之后的代码并不需要在原始上下文中运行，那么使用ConfigureAwait(false)就可以避免上述花销：
+             * 它不用排队，且可以利用所有可以进行的优化，还可以避免不必要的线程静态访问。
+             * 提升性能 避免死锁
+             */
+            context.ServiceProvider.GetService<Singleton>().StartAsync().ConfigureAwait(false);
+            context.ServiceProvider.GetService<Scoped>().StartAsync().ConfigureAwait(false);
+            context.ServiceProvider.GetService<Transient>().StartAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -181,11 +181,6 @@ namespace Acme.BookStore
         /// <param name="context"></param>
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
-            Console.WriteLine("程序初始化");
-            context.ServiceProvider.GetService<Singleton>().StartAsync();
-            context.ServiceProvider.GetService<Scoped>().StartAsync();
-            context.ServiceProvider.GetService<Transient>().StartAsync();
-
             // 程序初始化时找到 IWorker 服务 使用 Start方法
             context.ServiceProvider.GetService<IWorker>().Start();
             context.ServiceProvider.GetService<UseDistributedCache>().Start();
@@ -197,10 +192,6 @@ namespace Acme.BookStore
         /// <param name="context"></param>
         public override void OnPostApplicationInitialization(ApplicationInitializationContext context)
         {
-            Console.WriteLine("程序初始化之后");
-            context.ServiceProvider.GetService<Singleton>().StartAsync();
-            context.ServiceProvider.GetService<Scoped>().StartAsync();
-            context.ServiceProvider.GetService<Transient>().StartAsync();
 
         }
     }

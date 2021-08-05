@@ -24,9 +24,9 @@ namespace Acme.BookStore.BackgroundWorker
         /// </summary>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override async Task StartAsync(CancellationToken cancellationToken = new CancellationToken())
+        public override Task StartAsync(CancellationToken cancellationToken = new CancellationToken())
         {
-            await base.StartAsync(cancellationToken);
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -24,5 +24,6 @@ namespace Acme.BookStore.BackgroundWorker
         /// 使用 ITypeList 逆变型集合存储 BackgroundWorker
         /// </summary>
         public ITypeList<IWorker> BackgroundWorkers { get; }
+
     }
 }
