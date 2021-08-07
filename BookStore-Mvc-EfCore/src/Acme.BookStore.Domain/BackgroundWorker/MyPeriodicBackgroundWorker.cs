@@ -35,7 +35,6 @@ namespace Acme.BookStore.BackgroundWorker
         {
             // 最好使用 PeriodicBackgroundWorkerContext 解析依赖 而不是构造函数.
             // 因为 AsyncPeriodicBackgroundWorkerBase 使用 IServiceScope 在你的任务执行结束时会对其 disposed.
-            // 使用属性注入也可以
             var schoolRepository = workerContext.ServiceProvider.GetService<IProductRepository>();
             _count++;
         }
