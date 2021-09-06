@@ -15,6 +15,7 @@ using Acme.BookStore.Localization;
 using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.Permissions;
 using Acme.BookStore.Web.Menus;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.OpenApi.Interfaces;
@@ -90,11 +91,25 @@ namespace Acme.BookStore.Web
             var configuration = context.Services.GetConfiguration();
             context.Services.AddCors(o =>
             {
-                o.AddPolicy("policy", configuration =>
+                //o.AddPolicy("policy", configuration =>
+                //{
+                //    configuration.AllowAnyHeader();
+                //    configuration.AllowAnyOrigin();
+                //    configuration.AllowAnyMethod();
+                //});
+                o.AddDefaultPolicy(builder =>
                 {
-                    configuration.AllowAnyHeader();
-                    configuration.AllowAnyOrigin();
-                    configuration.AllowAnyMethod();
+                    builder.WithOrigins(
+                            configuration["App:CorsOrigins"]
+                                .Split(",", StringSplitOptions.RemoveEmptyEntries)
+                                .Select(o => o.RemovePostFix("/"))
+                                .ToArray()
+                        )// 设置允许访问的地址
+                        .WithAbpExposedHeaders()// 设置 获取资源可能使用并可公开的标头
+                        .SetIsOriginAllowedToAllowWildcardSubdomains()// 是否允许源时允许源匹配已配置的通配符域
+                        .AllowAnyHeader()// 允许任何请求头
+                        .AllowAnyMethod()// 允许任何请求方法
+                        .AllowCredentials();// 允许任何凭证
                 });
             });
             ConfigureUrls(configuration);
@@ -362,7 +377,8 @@ namespace Acme.BookStore.Web
             app.UseStaticFiles();
             app.UseRouting();
 
-            app.UseCors("policy");
+            //app.UseCors("policy");
+            app.UseCors();
             app.UseAuthentication();// 使用身份验证中间件
             app.UseJwtTokenMiddleware();// 使用Jwt令牌
 
