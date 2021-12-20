@@ -58,7 +58,7 @@ namespace Acme.BookStore.Books
         {
             return await BookRepository.GetAllIsInActiveAsync(
                 new InActiveBookSpecification()
-                    .And(new InActiveBookSpecification())// 用使展扩法方法 组合规约
+                    .And(new InPriceSpecification())// 用使展扩法方法 组合规约 可组合使用And，Or，Not和AndNot扩展方法
                     );
         }
 

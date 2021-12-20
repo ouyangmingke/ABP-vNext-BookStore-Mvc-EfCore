@@ -86,8 +86,13 @@ namespace Acme.BookStore.EntityFrameworkCore
             // 解决方案可以是 使用  .IsRequired(false)   或者 禁用过滤器
             // builder.Entity<Blog>().HasMany(b => b.Posts).WithOne(p => p.Blog).IsRequired();
 
-            // 过滤Name为空的数据
-            builder.Entity<Book>().HasQueryFilter(t => t.Name.IsNullOrEmpty());
+            // 过滤 Book.Name 中不含 H 的数据
+            // 使用该方式无法使用 ABP IDataFilter 开启关闭
+            // 如果想关闭需要在Dbcontext查询中使用 .IgnoreQueryFilters() 
+            //  await dbSet.AsQueryable()//查询数据库
+            //  .IgnoreQueryFilters()
+            //  .ToListAsync();
+            builder.Entity<Book>().HasQueryFilter(t => t.Name.Contains("H"));
 
             builder.ConfigureBookStore();
         }

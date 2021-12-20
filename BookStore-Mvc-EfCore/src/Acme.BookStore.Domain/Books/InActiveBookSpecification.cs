@@ -24,4 +24,14 @@ namespace Acme.BookStore.Books
                            (book.LastModificationTime == null || book.LastModificationTime < time);
         }
     }
+
+    /// <summary>
+    /// 使用规约筛选价格 大于 50 元的书籍
+    /// </summary>
+    public class InPriceSpecification : Specification<Book> {
+
+        public override Expression<Func<Book, bool>> ToExpression() {
+            return book => book.Price > 50;
+        }
+    }
 }
