@@ -26,7 +26,8 @@ namespace Acme.BookStore.Books
         }
         public async Task<List<Book>> GetAllListAsync()
         {
-            return await DbSet.AsQueryable()//查询数据库
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.AsQueryable()//查询数据库
                 .Include(m => m.Type)// 指定相关查询结果 这个用于查询Book 的子集 Type
                                      //.ThenInclude(m => m.List)// 指定相关结果查询  这个用于查询 Book 的 list 子集
                 .ToListAsync();

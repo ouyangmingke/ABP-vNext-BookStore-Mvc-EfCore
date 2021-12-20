@@ -26,7 +26,8 @@ namespace Acme.BookStore.Authors
 
         public async Task<Author> FindByNameAsync(string name)
         {
-            return await DbSet.FirstOrDefaultAsync(author => author.Name == name);
+            var dbSet = await GetDbSetAsync();
+            return await dbSet.FirstOrDefaultAsync(author => author.Name == name);
         }
 
         public async Task<List<Author>> GetListAsync(
@@ -37,7 +38,9 @@ namespace Acme.BookStore.Authors
         {
             //WhereIf是ABP框架的快捷扩展方法。
             //Where仅在满足第一个条件时才添加条件（仅提供过滤器，它才按名称过滤）
-            return await DbSet
+
+            var dbSet = await GetDbSetAsync();
+            return await dbSet
                 .WhereIf(
                     !filter.IsNullOrWhiteSpace(),
                     author => author.Name.Contains(filter)
