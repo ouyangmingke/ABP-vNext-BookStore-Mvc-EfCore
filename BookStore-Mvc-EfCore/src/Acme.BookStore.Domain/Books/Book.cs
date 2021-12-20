@@ -30,7 +30,7 @@ namespace Acme.BookStore.Books
         public Book(Guid authorId, string name, BookType type, DateTime publishDate, float price)
         {
             Type = type;
-            Name = Check.NotNullOrWhiteSpace(Name, nameof(Name)); // 参数必须检查有效性.
+            Name = Check.NotNullOrWhiteSpace(name, nameof(name)); // 参数必须检查有效性.
             AuthorId = authorId;
             Price = price;
             PublishDate = publishDate;

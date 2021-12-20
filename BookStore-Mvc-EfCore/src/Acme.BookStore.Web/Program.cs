@@ -45,12 +45,13 @@ namespace Acme.BookStore.Web
 
                     // EnsureCreated 方法会检测数据库是否存在，如果不存在，就创建，然后返回 true；
                     // 如果数据库已经存在，不做任何处理并返回 false。
-                    var exist = bookStoreDbContext.Database.EnsureCreated();
+                    // 该方式已过时 现在在应用启动前进行数据迁移与播种
+                    //var exist = bookStoreDbContext.Database.EnsureCreated();
 
-                    if (exist)
-                    {
-                        // 写入初始化数据
-                    }
+                    //if (exist)
+                    //{
+                    //    // 写入初始化数据
+                    //}
 
                 }
 

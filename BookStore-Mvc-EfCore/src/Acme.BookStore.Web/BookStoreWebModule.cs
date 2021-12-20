@@ -45,6 +45,9 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Acme.BookStore.Data;
+using Volo.Abp.Data;
+using Serilog;
 
 namespace Acme.BookStore.Web
 {
@@ -400,6 +403,28 @@ namespace Acme.BookStore.Web
             app.UseAuditing();
             app.UseAbpSerilogEnrichers();
             app.UseConfiguredEndpoints();
+        }
+
+        public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
+        {
+
+            try
+            {
+                // 创建数据库迁移
+                // 初始化 基础标准数据
+                var dbContext = context.ServiceProvider.GetRequiredService<BookStoreDbMigrationService>();
+                dbContext.MigrateAsync().Wait();
+            }
+            catch (Exception e)
+            {
+                Log.Error($"数据迁移失败");
+            }
+            // 获取数据种 贡献者 并使用
+            var dataSeeders = context.ServiceProvider.GetRequiredService<IEnumerable<IDataSeedContributor>>();
+            foreach (var dataSeedContributor in dataSeeders)
+            {
+                dataSeedContributor.SeedAsync(new DataSeedContext());
+            }
         }
     }
 }
