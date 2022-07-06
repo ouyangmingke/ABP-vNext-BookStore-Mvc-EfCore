@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 
 using Acme.BookStore.EntityFrameworkCore;
 
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,7 +16,7 @@ namespace Acme.BookStore.Web
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static async Task<int> Main(string[] args)
         {
 
             /***********
@@ -36,7 +38,20 @@ namespace Acme.BookStore.Web
             try
             {
                 Log.Information("Starting web host.");
-                var host = CreateHostBuilder(args).Build();
+                var builder = WebApplication.CreateBuilder(args);
+                builder.Host.AddAppSettingsSecretsJson()
+                .ConfigureAppConfiguration((hcb, cb) =>
+                {
+                    cb.SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile(Path.Combine("Config", "appsettings.json"))
+                        .AddJsonFile(Path.Combine("Config", $"appsettings.{hcb.HostingEnvironment.EnvironmentName}.json"), true,
+                                true);
+                })
+                .UseAutofac()
+                .UseSerilog();
+
+                await builder.AddApplicationAsync<BookStoreWebModule>();
+                var host = builder.Build();
 
                 // 创建一个“作用域”级别的服务实例 用完就丢弃 using
                 using (IServiceScope scope = host.Services.CreateScope())
@@ -54,9 +69,9 @@ namespace Acme.BookStore.Web
                     //}
 
                 }
+                await host.InitializeApplicationAsync();
 
-                host.Run();
-
+                await host.RunAsync();
                 return 0;
             }
             catch (Exception ex)
@@ -69,14 +84,5 @@ namespace Acme.BookStore.Web
                 Log.CloseAndFlush();
             }
         }
-
-        internal static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                })
-                .UseAutofac()
-                .UseSerilog();
     }
 }

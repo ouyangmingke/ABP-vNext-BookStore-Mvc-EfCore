@@ -8,6 +8,7 @@ using Acme.BookStore.Settings;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.Threading;
@@ -32,12 +33,12 @@ namespace Acme.BookStore.BackgroundWorker
 
         public IServiceProvider ServiceProvider { get; set; }
         public IServiceScopeFactory ServiceScopeFactory { get; set; }
-        public void Start()
+        public async void Start()
         {
             // 通常在 OnApplicationInitialization 添加工作者
-            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyBackgroundWorkerBase>());
-            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyPeriodicBackgroundWorker>());
-            MyBackgroundWorkerManager.Add(ServiceProvider.GetRequiredService<MyAsyncPeriodicBackgroundWorker>());
+            await MyBackgroundWorkerManager.AddAsync(ServiceProvider.GetRequiredService<MyBackgroundWorkerBase>());
+            await MyBackgroundWorkerManager.AddAsync(ServiceProvider.GetRequiredService<MyPeriodicBackgroundWorker>());
+            await MyBackgroundWorkerManager.AddAsync(ServiceProvider.GetRequiredService<MyAsyncPeriodicBackgroundWorker>());
         }
     }
 }

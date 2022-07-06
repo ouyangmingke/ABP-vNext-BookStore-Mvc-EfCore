@@ -24,8 +24,8 @@ namespace Acme.BookStore.EntityFrameworkCore
         private static IConfigurationRoot BuildConfiguration()
         {
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Acme.BookStore.DbMigrator/"))
-                .AddJsonFile("appsettings.json", optional: false);
+                .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../Acme.BookStore.Web/"))
+                .AddJsonFile(Path.Combine("Config", "appsettings.json"), optional: false);
 
             return builder.Build();
         }

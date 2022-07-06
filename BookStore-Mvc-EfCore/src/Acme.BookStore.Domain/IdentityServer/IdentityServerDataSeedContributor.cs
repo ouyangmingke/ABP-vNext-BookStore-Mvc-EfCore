@@ -21,7 +21,7 @@ using Client = Volo.Abp.IdentityServer.Clients.Client;
 namespace Acme.BookStore.IdentityServer
 {
     /// <summary>
-    /// 添加种子数据
+    /// 添加身份管理相关种子数据
     /// </summary>
     public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransientDependency
     {
@@ -86,6 +86,10 @@ namespace Acme.BookStore.IdentityServer
             await CreateApiResourceAsync("BookStore", commonApiUserClaims);
         }
 
+        /// <summary>
+        /// 创建 API 资源
+        /// </summary>
+        /// <returns></returns>
         private async Task<ApiResource> CreateApiResourceAsync(string name, IEnumerable<string> claims)
         {
             var apiResource = await _apiResourceRepository.FindByNameAsync(name);
@@ -112,6 +116,10 @@ namespace Acme.BookStore.IdentityServer
             return await _apiResourceRepository.UpdateAsync(apiResource);
         }
 
+        /// <summary>
+        /// 创建 API 范围
+        /// </summary>
+        /// <returns></returns>
         private async Task<ApiScope> CreateApiScopeAsync(string name)
         {
             var apiScope = await _apiScopeRepository.FindByNameAsync(name);
@@ -142,7 +150,8 @@ namespace Acme.BookStore.IdentityServer
                 "address",
                 "BookStore"
             };
-
+            // 获取配置信息
+            // 根据配置信息创建客户端
             var configurationSection = _configuration.GetSection("IdentityServer:Clients");
 
             //Web Client
@@ -220,6 +229,21 @@ namespace Acme.BookStore.IdentityServer
             }
         }
 
+        /// <summary>
+        /// 创建 客户端
+        /// </summary>
+        /// <param name="name">客户端名称</param>
+        /// <param name="scopes">客户端的范围</param>
+        /// <param name="grantTypes">授予客户端的类型</param>
+        /// <param name="secret">客户的秘密 / 密码</param>
+        /// <param name="redirectUri">重定向客户端的 URI</param>
+        /// <param name="postLogoutRedirectUri">登录客户端的重定向 URI</param>
+        /// <param name="frontChannelLogoutUri">注销客户端的重定向 URI</param>
+        /// <param name="requireClientSecret">是否需要请求客户端的密码</param>
+        /// <param name="requirePkce"></param>
+        /// <param name="permissions">权限</param>
+        /// <param name="corsOrigins">客户端源地址</param>
+        /// <returns></returns>
         private async Task<Client> CreateClientAsync(
             string name,
             IEnumerable<string> scopes,
