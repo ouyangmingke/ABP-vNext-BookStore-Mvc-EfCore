@@ -17,6 +17,7 @@ using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.BackgroundWorkers;
 using Volo.Abp.Caching;
+using Volo.Abp.Caching.StackExchangeRedis;
 using Volo.Abp.Data;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -43,6 +44,7 @@ namespace Acme.BookStore
         typeof(AbpSettingManagementDomainModule),
         typeof(AbpTenantManagementDomainModule),
         typeof(AbpAspNetCoreMultiTenancyModule),
+        typeof(AbpCachingStackExchangeRedisModule),
         typeof(AbpCachingModule)
         )]
     public class BookStoreDomainModule : AbpModule
@@ -119,11 +121,11 @@ namespace Acme.BookStore
                 options.GlobalCacheEntryOptions = new DistributedCacheEntryOptions
                 {
                     // 多久不访问后删除
-                    // SlidingExpiration = new TimeSpan(0,0,3),
+                    SlidingExpiration = new TimeSpan(0, 0, 3),
                     // 到达固定时间后删除
                     // AbsoluteExpiration = new DateTimeOffset(b),
                     // 创建后到达固定时间删除
-                    AbsoluteExpirationRelativeToNow = new TimeSpan(0, 0, 0, 5)
+                    //AbsoluteExpirationRelativeToNow = new TimeSpan(0, 0, 1, 0)
                 };
             });
 

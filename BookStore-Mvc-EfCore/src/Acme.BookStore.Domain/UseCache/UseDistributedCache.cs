@@ -1,23 +1,21 @@
-﻿using System;
+﻿using Microsoft.Extensions.Caching.Distributed;
+
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading;
-
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.VisualBasic;
+using System.Threading.Tasks;
 
 using Volo.Abp.Caching;
 using Volo.Abp.Domain.Services;
-using Volo.Abp.Settings;
 
 namespace Acme.BookStore.UseCache
 {
     /// <summary>
     /// 使用ABP缓存
     /// Package： Volo.Abp.Caching 
+    /// AbpDistributedCacheOptions 缓存配置
     /// </summary>
     public class UseDistributedCache : DomainService
     {
@@ -40,12 +38,12 @@ namespace Acme.BookStore.UseCache
             var temp = JsonSerializer.Serialize(new CacheData { Name = "A" });
             var arr = Encoding.UTF8.GetBytes(temp);
 
-            DistributedCache.Set("key", arr);
-            var valueBytes = DistributedCache.Get("key");
+            DistributedCache.Set("DCkey", arr);
+            var valueBytes = DistributedCache.Get("DCkey");
             var byteArr = Encoding.UTF8.GetString(valueBytes);
             var value1 = JsonSerializer.Deserialize<CacheData>(byteArr);
-            DistributedCache.Set("key", Encoding.UTF8.GetBytes("B"));
-            var value2 = Encoding.UTF8.GetString(DistributedCache.Get("key"));
+            DistributedCache.Set("DCkey2", Encoding.UTF8.GetBytes("B"));
+            var value3 = Encoding.UTF8.GetString(DistributedCache.Get("DCkey2"));
         }
 
         /// <summary>
@@ -58,14 +56,14 @@ namespace Acme.BookStore.UseCache
         public IDistributedCache<CacheData> DsCache { get; set; }
         public void UseDistributedCache2()
         {
-
-            DsCache.Set("key", new CacheData { Name = "A" });
-            var value1 = DsCache.Get("key");
-            var a = DateAndTime.Now;
-            Thread.Sleep(new TimeSpan(0, 0, 10));
-            var b = DateAndTime.Now;
-            //DsCache.Set("key", new CacheData { Name = "B" });
-            var value2 = DsCache.Get("key");
+            DsCache.Set("CDKey", new CacheData { Name = "A" });
+            var value1 = DsCache.Get("CDKey");
+            DsCache.Refresh("CDKey");// 重置其可调到期超时
+            //var a = DateAndTime.Now;
+            //Thread.Sleep(new TimeSpan(0, 0, 10));
+            //var b = DateAndTime.Now;
+            DsCache.Set("CDKey", new CacheData { Name = "B" });
+            var value2 = DsCache.Get("CDKey");
 
         }
 
@@ -76,27 +74,29 @@ namespace Acme.BookStore.UseCache
 
         public void UseDistributedCache3()
         {
+
             List<CacheData> dataSource = new List<CacheData>();
             for (var i = 0; i < 10; i++)
             {
                 dataSource.Add(new CacheData
                 {
                     Id = i,
-                    Name = "A"+i
+                    Name = "A" + i
                 });
             }
 
             var keys = dataSource.Select(t => t.Id).ToList();
             var values = dataSource.Select(t => t.Name).ToList();
             var dic = dataSource.ToDictionary(x => x.Id, x => x.Name);
-            
+
 
             Cache.Set(1, new CacheData { Name = "A" });
-            var value1 = Cache.Get(1);
-
-            Cache.Set(1, new CacheData { Name = "B" });
             var value2 = Cache.Get(1);
 
+            Cache.Set(1, new CacheData { Name = "B" });
+            var value3 = Cache.Get(1);
+
         }
+
     }
 }
