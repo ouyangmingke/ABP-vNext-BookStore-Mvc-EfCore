@@ -184,8 +184,8 @@ namespace Acme.BookStore
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
         {
             // 程序初始化时找到 IWorker 服务 使用 Start方法
-            context.ServiceProvider.GetService<IWorker>().Start();
-            context.ServiceProvider.GetService<UseDistributedCache>().Start();
+            //context.ServiceProvider.GetService<IWorker>().Start();
+            //context.ServiceProvider.GetService<UseDistributedCache>().Start();
         }
 
         /// <summary>
