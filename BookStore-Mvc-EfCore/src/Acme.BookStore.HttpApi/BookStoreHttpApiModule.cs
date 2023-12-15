@@ -1,9 +1,10 @@
-﻿using Volo.Abp.Account;
+using Volo.Abp.Account;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
 using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.TenantManagement;
+using Volo.Abp.SettingManagement;
 
 namespace Acme.BookStore
 {
@@ -15,6 +16,7 @@ namespace Acme.BookStore
         typeof(AbpTenantManagementHttpApiModule),
         typeof(AbpFeatureManagementHttpApiModule)
         )]
+    [DependsOn(typeof(AbpSettingManagementHttpApiModule))]
     public class BookStoreHttpApiModule : AbpModule
     {
         
