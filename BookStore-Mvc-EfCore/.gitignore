@@ -252,9 +252,6 @@ paket-files/
 *.sln.iml
 
 # BookStore
-src/Acme.BookStore.Web/Logs/*
-src/Acme.BookStore.Web.Host/Logs/*
-src/Acme.BookStore.IdentityServer/Logs/*
-src/Acme.BookStore.HttpApi.Host/Logs/*
-src/Acme.BookStore.HttpApi.HostWithIds/Logs/*
-src/Acme.BookStore.DbMigrator/Logs/*
+**/Logs/*
+**/libs/*
+
