@@ -20,6 +20,9 @@ using Volo.Abp.Domain.Repositories;
 
 namespace Acme.BookStore.Products
 {
+    /// <summary>
+    /// ApiExplorerSettingsAttribute 标记属于 Product 分组
+    /// </summary>
     [ApiExplorerSettings(GroupName = "Product")]
     public class ProductAppService : CrudAppService<Product, ProductDto, int,
         PagedAndSortedResultRequestDto, ProductDto>, IProductService

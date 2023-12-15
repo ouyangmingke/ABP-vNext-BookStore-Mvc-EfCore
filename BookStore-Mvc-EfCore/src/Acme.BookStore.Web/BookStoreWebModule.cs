@@ -234,9 +234,9 @@ namespace Acme.BookStore.Web
                 options =>
                 {
                     // 这里可以创建多个 Swagger 文档
-                    options.SwaggerDoc("v1", new OpenApiInfo
+                    options.SwaggerDoc("All", new OpenApiInfo
                     {
-                        Title = "BookStore API",
+                        Title = "ALL API",
                         Version = "v1",
                         Description = "BookStore 接口文档说明",
                         TermsOfService = new Uri("http://tempuri.org/terms "), // 服务条款
@@ -256,7 +256,7 @@ namespace Acme.BookStore.Web
                     options.SwaggerDoc("Product", new OpenApiInfo
                     {
                         Title = "Product API",
-                        Version = "Product",
+                        Version = "v1",
                         Description = "Products 接口文档说明",
                         TermsOfService = new Uri("http://tempuri.org/terms "), // 服务条款
                         Contact = new OpenApiContact() // 联系方式
@@ -272,9 +272,14 @@ namespace Acme.BookStore.Web
                         }
                     });
 
+                    options.SwaggerDoc("BookStore", new OpenApiInfo
+                    {
+                        Title = "BookStore API",
+                        Version = "v1",
+                        Description = "BookStore 接口",
+                    });
+
                     // 针对 ApiDescription 框架显示的每个操作调用
-                    // 这里通过 ApiExplorerSettingsAttribute 进行筛选
-                    // ApiExplorerSettingsAttribute 仅对标记类有效 所以继承的Crud 没有分组信息 
                     options.DocInclusionPredicate((docName, description) =>
                         {
                             // 尝试获取方法信息
@@ -283,18 +288,31 @@ namespace Acme.BookStore.Web
                                 return false;
                             }
 
-                            // 获取方法中 ApiExplorerSettingsAttribute 属性  GroupName 值
                             if (method.DeclaringType == null)
                             {
                                 return false;
                             }
+                          
+                            if (docName == "Product")
+                            {
+                                // 获取方法中 ApiExplorerSettingsAttribute 属性  GroupName 值
+                                // 这里通过 ApiExplorerSettingsAttribute 进行筛选
+                                // ApiExplorerSettingsAttribute 仅对标记类有效 所以继承的Crud 没有分组信息 
+                                var groupNames = method.DeclaringType.GetCustomAttributes(true)
+                                    .OfType<ApiExplorerSettingsAttribute>().Select(m => m.GroupName).ToList();
 
-                            var version = method.DeclaringType.GetCustomAttributes(true)
-                                .OfType<ApiExplorerSettingsAttribute>().Select(m => m.GroupName).ToList();
+                                // 分组名称与当前分组名称一致 通过筛选
+                                return groupNames.Any(v => v == docName);
+                            }
 
-                            // 未定义分组 或 分组名称与当前分组名称一致 通过筛选
-                            return !version.Any() || version.Any(v => v == docName);
+                            if (docName == "BookStore")
+                            {
+                                // 只显示项目主动编写的API
+                                return method.DeclaringType.FullName.StartsWith("Acme.BookStore");
+                            }
 
+                            // 全部API均显示
+                            return true;
                         }
                     );
 
@@ -390,8 +408,10 @@ namespace Acme.BookStore.Web
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "BookStore API");
+                // 配置 Swagger 选择框 中间的名称需要与 SwaggerDoc 名称一致
+                options.SwaggerEndpoint("/swagger/All/swagger.json", "ALL API");
                 options.SwaggerEndpoint("/swagger/Product/swagger.json", "Products API");
+                options.SwaggerEndpoint("/swagger/BookStore/swagger.json", "BookStore API");
             });
             app.UseAuditing();
             app.UseAbpSerilogEnrichers();
