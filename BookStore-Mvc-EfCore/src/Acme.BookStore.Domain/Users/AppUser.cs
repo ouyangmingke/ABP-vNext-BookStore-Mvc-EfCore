@@ -38,6 +38,8 @@ namespace Acme.BookStore.Users
 
         public virtual bool PhoneNumberConfirmed { get; private set; }
 
+        public virtual bool IsActive { get; private set; }
+
         #endregion
 
         /* Add your own properties here. Example:
@@ -57,7 +59,7 @@ namespace Acme.BookStore.Users
 
         private AppUser()
         {
-            
+
         }
     }
 }

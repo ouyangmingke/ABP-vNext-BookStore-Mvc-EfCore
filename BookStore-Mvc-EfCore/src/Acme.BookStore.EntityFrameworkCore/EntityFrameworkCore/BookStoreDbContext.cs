@@ -119,7 +119,7 @@ namespace Acme.BookStore.EntityFrameworkCore
                     e => !IsActiveFilterEnabled || EF.Property<bool>(e, "IsActive");
                 expression = expression == null
                     ? isActiveFilter
-                    : CombineExpressions(expression, isActiveFilter);
+                    : QueryFilterExpressionHelper.CombineExpressions(expression, isActiveFilter);
             }
             return expression;
         }

@@ -63,7 +63,7 @@ namespace Acme.BookStore
         private static void AutoAddDataSyncSynchronizerProviders(IServiceCollection services)
         {
             var works = new List<Type>();
-            services.OnRegistred(context =>
+            services.OnRegistered(context =>
             {
                 // public virtual bool IsAssignableFrom (Type? c);
                 // c 和当前实例表示相同类型
