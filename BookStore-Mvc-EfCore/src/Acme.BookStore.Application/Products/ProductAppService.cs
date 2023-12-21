@@ -9,11 +9,11 @@
 //  Copyright © 2020 广州市晨旭自动化设备有限公司. 版权所有
 //  *************************************************************************************
 
+using Acme.BookStore.Permissions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
-using Microsoft.AspNetCore.Mvc;
-
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
@@ -34,12 +34,12 @@ namespace Acme.BookStore.Products
             _repository = repository;
         }
 
-        public void GetProductsByDbContext()
+        public string GetProductsByDbContext()
         {
             // 无法获取DBContext  因为Application 没有依赖 EntityFrameworkCore  无法使用扩展方法
             // 根据数据库独立原则 应用层和领域层 应只通过领域层定义的接口进行数据访问
             // 避免因为切换数据库导致的重写
-            return;
+            return "无需权限";
         }
         /// <summary>
         /// 获取全部产品
@@ -47,15 +47,19 @@ namespace Acme.BookStore.Products
         /// <returns></returns>
         public async Task<List<ProductDto>> GetAllProducts()
         {
-            var a = await _repository.GetListAsync();
-
-            var b = ObjectMapper.Map<List<Product>, List<ProductDto>>(a);
-            return b;
+            var products = await _repository.GetListAsync();
+            return await MapToGetListOutputDtosAsync(products);
         }
 
-        public Task<ProductDto> CreatePPAsync(string name)
+        /// <summary>
+        /// 需要权限
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(BookStorePermissions.Product.Default)]
+        public string CheckDefaultAuthorize()
         {
-            return null;
+            return "通过权限";
         }
+
     }
 }

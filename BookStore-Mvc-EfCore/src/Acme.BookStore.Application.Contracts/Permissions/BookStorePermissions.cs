@@ -24,5 +24,11 @@
             public const string Edit = Default + ".Edit";
             public const string Delete = Default + ".Delete";
         }
+
+        public static class Product
+        {
+            public const string Default = GroupName + ".Authors";
+        }
+
     }
 }
