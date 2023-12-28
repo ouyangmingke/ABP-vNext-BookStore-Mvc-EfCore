@@ -38,6 +38,7 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.1" />
 		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite" Version="2.4.6" />
 		<PackageReference Include="Volo.Abp.SettingManagement.Web" Version="7.4.4" />
+		<PackageReference Include="Volo.Abp.Swashbuckle" Version="7.4.4" />
 	</ItemGroup>
 
 	<ItemGroup>

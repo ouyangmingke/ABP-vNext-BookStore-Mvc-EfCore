@@ -117,7 +117,7 @@ namespace Acme.BookStore.IdentityServer
         }
 
         /// <summary>
-        /// 创建 API 范围
+        /// 创建 API 范围   资源内的属性，权限校验时将验证
         /// </summary>
         /// <returns></returns>
         private async Task<ApiScope> CreateApiScopeAsync(string name)

@@ -8,6 +8,8 @@
     {
         public const string GroupName = "BookStore";
 
+        public const string MyPermission1 = GroupName + ".MyPermission1";
+        public const string MyPermission10 = GroupName + ".MyPermission10";
         public static class Books
         {
             // 分层定义权限名称

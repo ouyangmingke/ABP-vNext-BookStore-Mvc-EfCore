@@ -60,6 +60,6 @@ namespace Acme.BookStore.Products
         {
             return "通过权限";
         }
-
+   
     }
 }

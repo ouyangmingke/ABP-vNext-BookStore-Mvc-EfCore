@@ -63,9 +63,14 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
         }
     }
 
+    /// <summary>
+    /// 创建资源范围 
+    /// </summary>
+    /// <returns></returns>
     private async Task CreateApiScopesAsync()
     {
         await CreateApiScopeAsync("BookStore");
+        await CreateApiScopeAsync("Zero");
     }
 
     private async Task CreateApiResourcesAsync()
@@ -81,19 +86,31 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
             };
 
         await CreateApiResourceAsync("BookStore", commonApiUserClaims);
+        await CreateApiResourceAsync("Zero", commonApiUserClaims);
     }
 
+    /// <summary>
+    /// 创建 API 资源
+    /// 资源将关联到同名 Scope
+    /// </summary>
+    /// <param name="name"></param>
+    /// <param name="claims"></param>
+    /// <returns></returns>
     private async Task<ApiResource> CreateApiResourceAsync(string name, IEnumerable<string> claims)
     {
         var apiResource = await _apiResourceRepository.FindByNameAsync(name);
         if (apiResource == null)
         {
-            apiResource = await _apiResourceRepository.InsertAsync(
-                new ApiResource(
+            var resource = new ApiResource(
                     _guidGenerator.Create(),
                     name,
                     name + " API"
-                ),
+                );
+            // 创建资源时 在构造函数中 将自动关联到 同名 Scope
+            // 将资源添加到指定范围
+            // resource.AddScope(XXX);
+            apiResource = await _apiResourceRepository.InsertAsync(
+              resource,
                 autoSave: true
             );
         }
@@ -109,6 +126,11 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
         return await _apiResourceRepository.UpdateAsync(apiResource);
     }
 
+    /// <summary>
+    /// 创建 API 范围   资源内的属性，权限校验时将验证
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
     private async Task<ApiScope> CreateApiScopeAsync(string name)
     {
         var apiScope = await _apiScopeRepository.FindByNameAsync(name);
@@ -129,6 +151,7 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
 
     private async Task CreateClientsAsync()
     {
+        // Token 中 scope 
         var commonScopes = new[]
         {
                 "email",
@@ -137,7 +160,8 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
                 "role",
                 "phone",
                 "address",
-                "BookStore"
+                "BookStore",
+                "Zero",
             };
 
         var configurationSection = _configuration.GetSection("IdentityServer:Clients");
@@ -162,8 +186,24 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
             );
         }
 
+        // BookStore_Zero 客户端
+        // 通过该客户端 需要先登录在获取 Token 只可访问 Zero 资源
+        var zeroSwaggerClientId = configurationSection["BookStore_Zero:ClientId"];
+        if (!zeroSwaggerClientId.IsNullOrWhiteSpace())
+        {
+            var swaggerRootUrl = configurationSection["BookStore_Zero:RootUrl"].TrimEnd('/');
 
-
+            await CreateClientAsync(
+                name: zeroSwaggerClientId,
+                clientUri: swaggerRootUrl,
+                scopes: new[] { "Zero" },
+                grantTypes: new[] { "authorization_code" },
+                secret: configurationSection["BookStore_Zero:ClientSecret"]?.Sha256(),
+                requireClientSecret: false,
+                redirectUri: $"{swaggerRootUrl}/swagger/oauth2-redirect.html",
+                corsOrigins: new[] { swaggerRootUrl.RemovePostFix("/") }
+            );
+        }
         // Swagger Client
         var swaggerClientId = configurationSection["BookStore_Swagger:ClientId"];
         if (!swaggerClientId.IsNullOrWhiteSpace())
@@ -213,8 +253,8 @@ public class IdentityServerDataSeedContributor : IDataSeedContributor, ITransien
                     AlwaysIncludeUserClaimsInIdToken = true,
                     AllowOfflineAccess = true,
                     AbsoluteRefreshTokenLifetime = 31536000, //365 days
-                        AccessTokenLifetime = 31536000, //365 days
-                        AuthorizationCodeLifetime = 300,
+                    AccessTokenLifetime = 31536000, //365 days
+                    AuthorizationCodeLifetime = 300,
                     IdentityTokenLifetime = 300,
                     RequireConsent = false,
                     FrontChannelLogoutUri = frontChannelLogoutUri,

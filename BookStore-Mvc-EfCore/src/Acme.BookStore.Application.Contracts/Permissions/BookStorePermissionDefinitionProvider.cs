@@ -17,7 +17,8 @@ namespace Acme.BookStore.Permissions
 
             // 添加一个权限组
             var bookStoreGroup = context.AddGroup(BookStorePermissions.GroupName, L("Permission:BookStore"));
-
+            bookStoreGroup.AddPermission(BookStorePermissions.MyPermission1);
+            bookStoreGroup.AddPermission(BookStorePermissions.MyPermission10);
             // 添加权限
             var booksPermission = bookStoreGroup.AddPermission(BookStorePermissions.Books.Default, L("Permission:Books"));
             // 添加权限下的子权限

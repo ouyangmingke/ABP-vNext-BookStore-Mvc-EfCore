@@ -5,8 +5,10 @@ using Acme.BookStore.MultiTenancy;
 using Acme.BookStore.Permissions;
 using Acme.BookStore.Web.Menus;
 using Localization.Resources.AbpUi;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -25,6 +27,7 @@ using Volo.Abp;
 using Volo.Abp.Account.Web;
 using Volo.Abp.AspNetCore.Authentication.JwtBearer;
 using Volo.Abp.AspNetCore.Mvc;
+using Volo.Abp.AspNetCore.Mvc.AntiForgery;
 using Volo.Abp.AspNetCore.Mvc.Localization;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.LeptonXLite;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
@@ -35,11 +38,12 @@ using Volo.Abp.Data;
 using Volo.Abp.Identity.Web;
 using Volo.Abp.Localization;
 using Volo.Abp.Modularity;
+using Volo.Abp.SettingManagement.Web;
+using Volo.Abp.Swashbuckle;
 using Volo.Abp.TenantManagement.Web;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
-using Volo.Abp.SettingManagement.Web;
 
 namespace Acme.BookStore.Web
 {
@@ -47,6 +51,7 @@ namespace Acme.BookStore.Web
         typeof(BookStoreHttpApiModule),
         typeof(BookStoreApplicationModule),
         typeof(BookStoreEntityFrameworkCoreDbMigrationsModule),
+        typeof(AbpSwashbuckleModule),
         typeof(AbpAutofacModule),
         typeof(AbpIdentityWebModule),
         typeof(AbpAccountWebIdentityServerModule),
@@ -58,6 +63,9 @@ namespace Acme.BookStore.Web
     [DependsOn(typeof(AbpSettingManagementWebModule))]
     public class BookStoreWebModule : AbpModule
     {
+        // 当前 Api资源名称
+        private readonly string _apiResourceName = "Zero";
+
         /// <summary>
         /// 预配置
         /// </summary>
@@ -116,6 +124,14 @@ namespace Acme.BookStore.Web
             ConfigureNavigationServices();
             ConfigureAutoApiControllers();
             ConfigureSwaggerServices(context.Services);
+            ConfigureSwaggerServices(context, configuration);
+
+            // XSRF
+            Configure<AbpAntiForgeryOptions>(options =>
+            {
+                //options.TokenCookie.Expiration = TimeSpan.Zero;
+                options.AutoValidate = false;
+            });
 
             // 获取配置并使用  RazorPagesOptions 的可以在预配置中修改
             // 没有权限的用户将被重定向到登录页面
@@ -154,8 +170,9 @@ namespace Acme.BookStore.Web
                 {
                     options.Authority = configuration["AuthServer:Authority"];
                     options.RequireHttpsMetadata = Convert.ToBoolean(configuration["AuthServer:RequireHttpsMetadata"]);
-                    options.Audience = "BookStore";
+                    options.Audience = _apiResourceName;// 一般指 ApiResource 名称
                 });
+            context.Services.ForwardIdentityAuthenticationForBearer();
         }
 
         /// <summary>
@@ -292,7 +309,7 @@ namespace Acme.BookStore.Web
                             {
                                 return false;
                             }
-                          
+
                             if (docName == "Product")
                             {
                                 // 获取方法中 ApiExplorerSettingsAttribute 属性  GroupName 值
@@ -310,15 +327,21 @@ namespace Acme.BookStore.Web
                                 // 只显示项目主动编写的API
                                 return method.DeclaringType.FullName.StartsWith("Acme.BookStore");
                             }
-
-                            // 全部API均显示
+                            // 只有需要权限的API才显示
+                            if (docName == "Auth")
+                            {
+                                // 检查Api类是否需要权限
+                                // 检查方法是否需要权限
+                                return method.DeclaringType.CustomAttributes.Any(t => t.AttributeType == typeof(AuthorizeAttribute))
+                                || method.DeclaringType.GetMembers().Any(t => t.CustomAttributes.Any(t => t.AttributeType == typeof(AuthorizeAttribute)));
+                            }
+                            // API 显示
                             return true;
                         }
                     );
 
                     // 生成API时 避免命名空间不同但是名称相同  使用全名进行区分
                     options.CustomSchemaIds(type => type.FullName);
-
                     #region 添加安全定义和要求
 
 
@@ -368,9 +391,28 @@ namespace Acme.BookStore.Web
                         }
                     });
                     #endregion
-
                 }
             );
+        }
+
+        /// <summary>
+        /// 使用 OAuth2 通过 客户端 获取Token
+        /// Volo.Abp.Swashbuckle
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="configuration"></param>
+        private void ConfigureSwaggerServices(ServiceConfigurationContext context, IConfiguration configuration)
+        {
+            context.Services.AddAbpSwaggerGenWithOAuth(
+                configuration["AuthServer:Authority"],
+                new Dictionary<string, string>
+                {
+                    {_apiResourceName, _apiResourceName+" AuthAPI"}
+                },
+                options =>
+                {
+                    options.SwaggerDoc("Auth", new OpenApiInfo { Title = _apiResourceName + " AuthAPI", Version = "v1" });
+                });
         }
 
         public override void OnApplicationInitialization(ApplicationInitializationContext context)
@@ -410,6 +452,7 @@ namespace Acme.BookStore.Web
             {
                 // 配置 Swagger 选择框 中间的名称需要与 SwaggerDoc 名称一致
                 options.SwaggerEndpoint("/swagger/All/swagger.json", "ALL API");
+                options.SwaggerEndpoint("/swagger/Auth/swagger.json", "ALL AuthAPI");
                 options.SwaggerEndpoint("/swagger/Product/swagger.json", "Products API");
                 options.SwaggerEndpoint("/swagger/BookStore/swagger.json", "BookStore API");
             });
@@ -420,7 +463,6 @@ namespace Acme.BookStore.Web
 
         public override void OnPreApplicationInitialization(ApplicationInitializationContext context)
         {
-
             try
             {
                 // 创建数据库迁移
